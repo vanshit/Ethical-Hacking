@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HACKDOOR — Your Doorway to Learning Ethical Hacking. Beginner ethical hacking workshop presentation.">
+<title>HACKDOOR — Your Doorway to Learning Ethical Hacking</title>
+<style>
+/* ============================================================
+   HACKDOOR — ClayMorphism × Hacker Terminal
+   1. Theme tokens  2. Base  3. Chrome (header/footer)
+   4. Components    5. Slides  6. Overlays  7. Motion/a11y
+   ============================================================ */
+/* ---------- 1. THEME TOKENS ---------- */
+:root{
+  --grn:#2bff88; --grn2:#12c96b; --cyn:#3ee6e0; --amb:#ffc24b; --red:#ff5d73;
+  --bg:#0a0e0c; --bg2:#0d1310; --ink:#e8f5ee; --ink-dim:#93a89c;
+  --line:#223029; --acc:#2bff88; --acc-ink:#04160c;
+  --clay:linear-gradient(145deg,#1a241e,#101712);
+  --clay2:linear-gradient(145deg,#1f2c24,#141c17);
+  --sh:14px 14px 34px rgba(0,0,0,.55),-8px -8px 20px rgba(62,86,72,.10),inset 0 1px 0 rgba(255,255,255,.055);
+  --sh-sm:7px 7px 18px rgba(0,0,0,.5),-4px -4px 12px rgba(62,86,72,.08),inset 0 1px 0 rgba(255,255,255,.05);
+  --sh-in:inset 4px 4px 12px rgba(0,0,0,.55),inset -3px -3px 9px rgba(62,86,72,.10);
+  --head:#121a15cc;
+  --mono:ui-monospace,'Cascadia Code','JetBrains Mono',Menlo,Consolas,'Liberation Mono',monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+  --r:22px; --r-sm:14px; --hdr:64px; --ftr:56px;
+  color-scheme:dark;
+}
+html[data-theme="light"]{
+  --bg:#ecefe8; --bg2:#e3e8de; --ink:#15211a; --ink-dim:#4c6055;
+  --line:#d3dcd1; --acc:#0a7a47; --acc-ink:#f4fff9;
+  --clay:linear-gradient(145deg,#ffffff,#e5ebdf);
+  --clay2:linear-gradient(145deg,#f6faf1,#dde6d6);
+  --sh:16px 16px 36px rgba(158,175,158,.5),-10px -10px 26px #ffffff,inset 0 1px 0 #ffffff;
+  --sh-sm:8px 8px 20px rgba(158,175,158,.42),-6px -6px 16px #ffffff,inset 0 1px 0 #fff;
+  --sh-in:inset 5px 5px 14px rgba(158,175,158,.4),inset -5px -5px 12px #ffffff;
+  --head:#f2f5eecc;
+  color-scheme:light;
+}
+/* ---------- 2. BASE ---------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  overflow:hidden;line-height:1.55;font-size:16px;
+  transition:background .45s ease,color .45s ease;
+}
+body::before{ /* subtle grid */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(43,255,136,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(43,255,136,.045) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 78%);
+  mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 78%);
+}
+html[data-theme="light"] body::before{background-image:linear-gradient(rgba(10,122,71,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(10,122,71,.06) 1px,transparent 1px)}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:55;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.beam{position:fixed;left:0;right:0;height:110px;top:-120px;z-index:54;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(43,255,136,.05),transparent);
+  animation:beam 9s linear infinite}
+@keyframes beam{to{transform:translateY(120vh)}}
+::selection{background:rgba(43,255,136,.32);color:inherit}
+h1,h2,h3,h4{line-height:1.15;font-weight:800;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:1rem;color:var(--ink)}
+:focus-visible{outline:2px dashed var(--cyn);outline-offset:3px;border-radius:6px}
+.mono{font-family:var(--mono)}
+.ic{width:1.1em;height:1.1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.18em;flex:none}
+.hidden{display:none!important}
+/* ---------- 3. CHROME ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;height:var(--hdr);z-index:40;
+  display:flex;align-items:center;gap:14px;padding:0 16px;
+  background:var(--head);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .logo-badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:var(--clay2);box-shadow:var(--sh-sm);color:var(--grn)}
+html[data-theme="light"] .brand .logo-badge{color:#0a7a47}
+.brand b{font-family:var(--mono);font-size:1.12rem;letter-spacing:.14em}
+.brand small{display:block;font-size:.68rem;color:var(--ink-dim);letter-spacing:.02em;white-space:nowrap}
+.hdr-mid{flex:1;text-align:center;min-width:0}
+#secLabel{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;color:var(--grn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-theme="light"] #secLabel{color:#0a7a47}
+#slideCount{font-family:var(--mono);font-size:.72rem;color:var(--ink-dim)}
+.hud{display:flex;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.72rem;
+  padding:6px 11px;border-radius:999px;background:var(--clay2);box-shadow:var(--sh-sm);
+  border:1px solid var(--line);white-space:nowrap}
+.chip .ic{width:.95em;height:.95em}
+.chip-xp{color:var(--grn)} html[data-theme="light"] .chip-xp{color:#0a7a47}
+.chip-streak{color:var(--amb)} .chip-badges{color:var(--cyn)}
+.hbtn{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
+  background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);
+  transition:transform .18s ease,box-shadow .18s ease,color .18s ease;position:relative}
+.hbtn:hover{transform:translateY(-2px);color:var(--grn)}
+html[data-theme="light"] .hbtn:hover{color:#0a7a47}
+.hbtn:active{transform:translateY(0)}
+.hbtn .ic{width:18px;height:18px}
+.hbtn .tip{position:absolute;top:calc(100% + 8px);right:0;font-family:var(--mono);font-size:.64rem;
+  background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);color:var(--ink);
+  padding:4px 8px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .15s;white-space:nowrap;z-index:5}
+.hbtn:hover .tip{opacity:1}
+#progWrap{position:fixed;top:var(--hdr);left:0;right:0;height:4px;background:var(--line);z-index:40}
+#progBar{height:100%;width:0;background:linear-gradient(90deg,var(--grn2),var(--grn),var(--cyn));
+  box-shadow:0 0 12px rgba(43,255,136,.6);transition:width .45s cubic-bezier(.65,0,.35,1)}
+footer{
+  position:fixed;bottom:0;left:0;right:0;height:var(--ftr);z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
+  background:var(--head);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+}
+.navbtn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.78rem;
+  letter-spacing:.12em;padding:10px 18px;border-radius:14px;background:var(--clay2);
+  box-shadow:var(--sh-sm);border:1px solid var(--line);transition:all .18s ease}
+.navbtn:hover{transform:translateY(-2px);color:var(--grn);box-shadow:var(--sh)}
+html[data-theme="light"] .navbtn:hover{color:#0a7a47}
+.navbtn:disabled{opacity:.35;pointer-events:none}
+.kbd-hints{font-family:var(--mono);font-size:.66rem;color:var(--ink-dim);letter-spacing:.05em;text-align:center}
+.kbd-hints b{color:var(--ink);background:var(--clay2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;box-shadow:var(--sh-in)}
+#footCount{font-family:var(--mono);font-size:.7rem;color:var(--ink-dim);letter-spacing:.1em}
+/* mission dots */
+#mDots{display:flex;align-items:center;gap:6px}
+.mdot{width:26px;height:10px;border-radius:6px;background:var(--clay2);box-shadow:var(--sh-in);
+  border:1px solid var(--line);position:relative;transition:all .4s ease}
+.mdot.done{background:linear-gradient(90deg,var(--grn2),var(--grn));box-shadow:0 0 10px rgba(43,255,136,.5)}
+.mdot.cur{outline:2px solid var(--cyn);outline-offset:2px}
+.mdot .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);font-family:var(--mono);
+  font-size:.62rem;background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);
+  padding:3px 8px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .15s;white-space:nowrap}
+.mdot:hover .tip{opacity:1}
+/* ---------- 4. COMPONENTS ---------- */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:700;
+  font-size:.86rem;letter-spacing:.1em;padding:14px 26px;border-radius:16px;
+  background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);
+  transition:transform .18s ease,box-shadow .25s ease,filter .2s ease;position:relative}
+.btn:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.btn:active{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(145deg,var(--grn),var(--grn2));color:var(--acc-ink);
+  box-shadow:0 10px 26px rgba(23,217,123,.35),inset 0 1px 0 rgba(255,255,255,.4);border:0}
+html[data-theme="light"] .btn-primary{background:linear-gradient(145deg,#11bf72,#0a7a47);color:#f4fff9}
+.btn-ghost{color:var(--ink-dim)}
+.btn-ghost:hover{color:var(--ink)}
+.btn:disabled{opacity:.45;pointer-events:none}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.18em;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim)}
+.tag.g{color:var(--grn);border-color:rgba(43,255,136,.4)} .tag.c{color:var(--cyn);border-color:rgba(62,230,224,.4)}
+.tag.a{color:var(--amb);border-color:rgba(255,194,75,.4)} .tag.r{color:var(--red);border-color:rgba(255,93,115,.4)}
+html[data-theme="light"] .tag.g{color:#0a7a47}
+.card{background:var(--clay);box-shadow:var(--sh);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.card.lift{transition:transform .2s ease,box-shadow .25s ease}
+.card.lift:hover{transform:translateY(-4px)}
+.card-in{background:var(--clay);box-shadow:var(--sh-in);border:1px solid var(--line);border-radius:var(--r-sm)}
+.warn{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;
+  color:var(--amb);border:1px dashed rgba(255,194,75,.55);border-radius:14px;padding:10px 16px;
+  background:rgba(255,194,75,.06)}
+.danger-note{color:var(--red);border-color:rgba(255,93,115,.5);background:rgba(255,93,115,.06)}
+/* ---------- TERMINAL ---------- */
+.term{border-radius:18px;overflow:hidden;background:#070b09;border:1px solid #1d2a22;
+  box-shadow:0 22px 44px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column}
+.term-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0d1410;border-bottom:1px solid #1d2a22}
+.term-head .dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#ff5d73}.dot.y{background:#ffc24b}.dot.g{background:#2bff88}
+.term-title{font-family:var(--mono);font-size:.68rem;color:#7d948a;letter-spacing:.06em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbtn{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:#9ff5c6;background:#122018;
+  border:1px solid #1f3a2b;border-radius:8px;padding:4px 9px;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.tbtn:hover{background:#1a2c21;color:#d6ffe8}
+.term-body{font-family:var(--mono);font-size:.82rem;line-height:1.65;color:#b8ffce;padding:16px 18px;
+  min-height:120px;max-height:340px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.term-body .ln-cmd{color:#eafff2}.term-body .ln-out{color:#8fdca8}.term-body .ln-ok{color:#2bff88}
+.term-body .ln-warn{color:#ffc24b}.term-body .ln-dim{color:#5f7a6c}.term-body .ln-cy{color:#3ee6e0}.term-body .ln-red{color:#ff5d73}
+.term-body .prompt{color:#2bff88;font-weight:700}
+.cursor{display:inline-block;width:.58ch;background:#2bff88;color:#2bff88;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.term-note{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:#8a6f2f;background:#151009;
+  padding:8px 14px;border-top:1px solid #241c0c}
+/* ---------- 5. SLIDES ---------- */
+main{position:fixed;inset:var(--hdr) 0 var(--ftr) 0;z-index:1}
+.slide{position:absolute;inset:0;display:none;overflow-y:auto;overflow-x:hidden;padding:30px 22px 44px;
+  scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide.active{display:block;animation:slideIn .5s cubic-bezier(.22,.9,.3,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(22px) scale(.992)}to{opacity:1;transform:none}}
+.slide-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.slide::-webkit-scrollbar{width:8px}.slide::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.3em;color:var(--grn);display:flex;align-items:center;gap:12px}
+.kicker::after{content:"";flex:0 0 60px;height:1px;background:linear-gradient(90deg,var(--grn),transparent)}
+html[data-theme="light"] .kicker{color:#0a7a47}
+.slide h2{font-size:clamp(1.7rem,3.6vw,2.6rem)}
+.slide h2 .hi{color:var(--grn);text-shadow:0 0 18px rgba(43,255,136,.35)}
+html[data-theme="light"] .slide h2 .hi{color:#0a7a47;text-shadow:none}
+.lede{color:var(--ink-dim);font-size:1.02rem;max-width:70ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.takeaway{display:flex;gap:12px;align-items:flex-start;border-left:3px solid var(--grn);
+  background:var(--clay2);box-shadow:var(--sh-sm);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:14px 18px}
+.takeaway b{font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;color:var(--grn)}
+html[data-theme="light"] .takeaway b{color:#0a7a47}
+.takeaway p{font-size:.92rem;color:var(--ink)}
+ul.tick{list-style:none;display:flex;flex-direction:column;gap:9px}
+ul.tick li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;color:var(--ink)}
+ul.tick li::before{content:"▸";color:var(--grn);font-family:var(--mono);flex:none;margin-top:1px}
+html[data-theme="light"] ul.tick li::before{color:#0a7a47}
+ul.tick li small{display:block;color:var(--ink-dim);font-size:.82rem}
+ul.no li::before{content:"✕";color:var(--red)}
+.hr-glow{height:1px;background:linear-gradient(90deg,transparent,var(--grn),transparent);opacity:.35;border:0}
+/* level header */
+.level-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.lvl-chip{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;padding:6px 13px;border-radius:10px;
+  background:linear-gradient(145deg,rgba(43,255,136,.18),rgba(43,255,136,.05));color:var(--grn);border:1px solid rgba(43,255,136,.4)}
+html[data-theme="light"] .lvl-chip{color:#0a7a47}
+.xp-chip{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;padding:6px 12px;border-radius:10px;
+  color:var(--amb);border:1px solid rgba(255,194,75,.4);background:rgba(255,194,75,.07)}
+.done-chip{display:none;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;padding:6px 12px;border-radius:10px;
+  color:var(--cyn);border:1px solid rgba(62,230,224,.4);background:rgba(62,230,224,.07)}
+.level-complete .done-chip{display:inline-flex}
+/* concept cards */
+.concept{display:flex;flex-direction:column;gap:8px}
+.concept .c-ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+  background:var(--clay2);box-shadow:var(--sh-sm);color:var(--grn);border:1px solid var(--line)}
+html[data-theme="light"] .concept .c-ic{color:#0a7a47}
+.concept h3{font-size:1rem;font-family:var(--mono);letter-spacing:.06em}
+.concept p{font-size:.88rem;color:var(--ink-dim)}
+.challenge{border:1.5px dashed rgba(43,255,136,.5);border-radius:var(--r);padding:22px;
+  background:linear-gradient(145deg,rgba(43,255,136,.06),transparent);display:flex;flex-direction:column;gap:14px}
+.challenge h3{font-family:var(--mono);letter-spacing:.1em;font-size:1rem;color:var(--grn);display:flex;gap:10px;align-items:center}
+html[data-theme="light"] .challenge h3{color:#0a7a47}
+.field{display:flex;gap:10px;flex-wrap:wrap}
+.field input,.field select{flex:1;min-width:180px;background:var(--clay);box-shadow:var(--sh-in);
+  border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-family:var(--mono);font-size:.9rem}
+.field input::placeholder{color:var(--ink-dim);opacity:.7}
+.fb{font-family:var(--mono);font-size:.8rem;min-height:1.4em}
+.fb.ok{color:var(--grn)}.fb.err{color:var(--red)}.fb.warn{color:var(--amb)}
+/* ---------- HERO ---------- */
+#s1 .slide-inner{padding-top:8px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:stretch}
+.glitch{font-family:var(--mono);font-weight:800;font-size:clamp(3rem,7.4vw,5.6rem);letter-spacing:.06em;
+  position:relative;line-height:1;text-shadow:0 0 30px rgba(43,255,136,.35)}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;opacity:0}
+.glitch::before{color:var(--cyn);animation:gl1 7s infinite steps(1)}
+.glitch::after{color:var(--red);animation:gl2 7s infinite steps(1)}
+@keyframes gl1{0%,93%{opacity:0;transform:none;clip-path:inset(0)}94%{opacity:.7;transform:translate(-3px,1px);clip-path:inset(12% 0 62% 0)}95%{opacity:.7;transform:translate(3px,-1px);clip-path:inset(58% 0 8% 0)}96%,100%{opacity:0}}
+@keyframes gl2{0%,93%{opacity:0}94.5%{opacity:.6;transform:translate(3px,1px);clip-path:inset(38% 0 34% 0)}95.5%{opacity:.6;transform:translate(-3px,-2px);clip-path:inset(4% 0 82% 0)}96.5%,100%{opacity:0}}
+.hero-tag{font-size:clamp(1.05rem,2vw,1.4rem);color:var(--ink);font-weight:600}
+.hero-sub{font-family:var(--mono);letter-spacing:.24em;font-size:.74rem;color:var(--ink-dim)}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.status-card{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;font-family:var(--mono);font-size:.78rem}
+.status-card dt{color:var(--ink-dim);letter-spacing:.1em}
+.status-card dd{color:var(--grn)}
+html[data-theme="light"] .status-card dd{color:#0a7a47}
+.ticker{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--clay2);box-shadow:var(--sh-in)}
+.ticker div{display:inline-block;white-space:nowrap;font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;
+  color:var(--ink-dim);padding:9px 0;animation:tick 30s linear infinite}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ---------- PIPELINE ---------- */
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;position:relative}
+.pnode{position:relative;text-align:center;padding:16px 8px 14px;border-radius:16px;background:var(--clay2);
+  box-shadow:var(--sh-sm);border:1px solid var(--line);cursor:pointer;transition:all .2s ease}
+.pnode:hover{transform:translateY(-4px)}
+.pnode .p-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--ink-dim)}
+.pnode .p-name{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;font-weight:700;margin-top:4px}
+.pnode .p-st{margin-top:8px;font-size:.92rem;color:var(--ink-dim)}
+.pnode.done{border-color:rgba(43,255,136,.55)} .pnode.done .p-st{color:var(--grn)}
+html[data-theme="light"] .pnode.done .p-st{color:#0a7a47}
+.pnode.sel{outline:2px solid var(--cyn);outline-offset:2px}
+.mbar{height:16px;border-radius:999px;background:var(--clay);box-shadow:var(--sh-in);overflow:hidden;position:relative}
+.mbar span{position:absolute;inset:3px auto 3px 3px;border-radius:999px;width:0;
+  background:linear-gradient(90deg,var(--grn2),var(--grn),var(--cyn));box-shadow:0 0 14px rgba(43,255,136,.55);
+  transition:width .8s cubic-bezier(.65,0,.35,1)}
+/* ---------- ETHICS / RULES ---------- */
+.roe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.roe{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;font-size:.88rem}
+.roe .ic{color:var(--red);margin-top:2px}
+.eth-check{display:flex;flex-direction:column;gap:12px}
+.tgl-row{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none}
+.tgl{flex:none;width:52px;height:28px;border-radius:999px;background:var(--clay);box-shadow:var(--sh-in);
+  border:1px solid var(--line);position:relative;transition:background .25s}
+.tgl::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:var(--clay2);box-shadow:var(--sh-sm);transition:transform .25s cubic-bezier(.5,1.6,.4,1)}
+.tgl[aria-checked="true"]{background:linear-gradient(145deg,rgba(43,255,136,.35),rgba(43,255,136,.12))}
+.tgl[aria-checked="true"]::after{transform:translateX(24px);background:var(--grn)}
+.stamp{font-family:var(--mono);letter-spacing:.14em;font-size:.8rem;color:var(--grn);border:2px solid var(--grn);
+  border-radius:12px;padding:10px 18px;display:inline-block;transform:rotate(-2deg);
+  box-shadow:0 0 22px rgba(43,255,136,.25);opacity:.25;transition:opacity .4s}
+.stamp.on{opacity:1;animation:stampPop .45s cubic-bezier(.5,1.8,.4,1)}
+@keyframes stampPop{from{transform:rotate(-2deg) scale(1.6);opacity:0}to{transform:rotate(-2deg) scale(1);opacity:1}}
+html[data-theme="light"] .stamp{color:#0a7a47;border-color:#0a7a47}
+/* ---------- LAB DIAGRAM ---------- */
+.labwrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.lab{display:flex;flex-direction:column;align-items:center;gap:0;padding:20px}
+.lab h4{font-family:var(--mono);font-size:.8rem;letter-spacing:.16em;margin-bottom:14px;text-align:center}
+.node{display:flex;align-items:center;gap:12px;padding:13px 18px;border-radius:16px;background:var(--clay2);
+  box-shadow:var(--sh-sm);border:1px solid var(--line);font-family:var(--mono);font-size:.82rem;min-width:250px}
+.node b{letter-spacing:.06em}
+.node small{display:block;color:var(--ink-dim);font-size:.66rem;letter-spacing:.12em}
+.node.attacker{border-color:rgba(62,230,224,.5)} .node.attacker .ic{color:var(--cyn)}
+.node.target{border-color:rgba(255,93,115,.5)} .node.target .ic{color:var(--red)}
+.wire{height:44px;width:2px;background:repeating-linear-gradient(180deg,var(--grn) 0 6px,transparent 6px 12px);
+  animation:flow 1.2s linear infinite;position:relative}
+@keyframes flow{to{background-position:0 12px}}
+.wire-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--ink-dim);margin:6px 0}
+/* ---------- TOOLKIT ---------- */
+.toolkit{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.tool{padding:16px 14px;display:flex;flex-direction:column;gap:8px;min-height:150px}
+.tool .t-badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-family:var(--mono);
+  font-weight:800;font-size:.78rem;background:var(--clay2);box-shadow:var(--sh-sm);color:var(--grn);border:1px solid var(--line);letter-spacing:.02em}
+html[data-theme="light"] .tool .t-badge{color:#0a7a47}
+.tool h4{font-family:var(--mono);font-size:.82rem;letter-spacing:.04em}
+.tool p{font-size:.76rem;color:var(--ink-dim);line-height:1.45}
+.tool .tag{align-self:flex-start;margin-top:auto}
+/* ---------- AI SPLIT ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.split .card h3{font-family:var(--mono);font-size:.9rem;letter-spacing:.12em;margin-bottom:12px;display:flex;gap:8px;align-items:center}
+.quote{font-family:var(--mono);font-size:clamp(1rem,2.4vw,1.5rem);text-align:center;letter-spacing:.06em;
+  color:var(--grn);padding:20px;border-radius:var(--r);background:var(--clay2);box-shadow:var(--sh-in);border:1px solid var(--line)}
+html[data-theme="light"] .quote{color:#0a7a47}
+/* ---------- SCOREBOARD ---------- */
+.sb-row{display:grid;grid-template-columns:34px 1fr 110px 44% auto;align-items:center;gap:12px;padding:13px 16px}
+.sb-rank{font-family:var(--mono);font-size:.9rem;color:var(--ink-dim);text-align:center}
+.sb-name{font-family:var(--mono);font-size:.88rem;letter-spacing:.06em;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.sb-xp{font-family:var(--mono);font-size:.9rem;color:var(--grn);text-align:right;font-weight:700}
+html[data-theme="light"] .sb-xp{color:#0a7a47}
+.sb-bar{height:14px;border-radius:999px;background:var(--clay);box-shadow:var(--sh-in);overflow:hidden;position:relative}
+.sb-bar span{position:absolute;inset:2px auto 2px 2px;border-radius:999px;width:0;transition:width .8s cubic-bezier(.65,0,.35,1);
+  background:linear-gradient(90deg,var(--grn2),var(--grn))}
+.sb-del{opacity:.35;transition:opacity .2s;font-size:.9rem;padding:4px}
+.sb-del:hover{opacity:1;color:var(--red)}
+.score-entry{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.score-entry select,.score-entry input{background:var(--clay);box-shadow:var(--sh-in);border:1px solid var(--line);
+  border-radius:12px;padding:11px 14px;font-family:var(--mono);font-size:.82rem}
+.log{font-family:var(--mono);font-size:.72rem;color:var(--ink-dim);display:flex;flex-direction:column;gap:5px;max-height:120px;overflow:auto}
+.cfg-chips{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- PORT QUIZ / ENUM PICKER ---------- */
+.plist{display:flex;flex-direction:column;gap:8px}
+.prow{display:grid;grid-template-columns:82px 1fr auto;gap:10px;align-items:center;
+  font-family:var(--mono);font-size:.82rem;padding:11px 15px;border-radius:13px;
+  background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);cursor:pointer;transition:all .16s ease;text-align:left}
+.prow:hover{transform:translateX(4px)}
+.prow.sel{border-color:var(--cyn);box-shadow:0 0 0 1px var(--cyn) inset,var(--sh-sm)}
+.prow.hit{border-color:rgba(43,255,136,.6)} .prow.hit .st{color:var(--grn)}
+.prow.miss{border-color:rgba(255,93,115,.55)} .prow.miss .st{color:var(--red)}
+.prow .st{font-size:.68rem;letter-spacing:.1em;color:var(--ink-dim)}
+.prow .pn{color:var(--cyn)} .prow .sv{color:var(--ink)}
+/* ---------- HINT LADDER ---------- */
+.ladder{display:flex;flex-direction:column;gap:12px;counter-reset:hint}
+.hint-step{display:grid;grid-template-columns:54px 1fr auto;gap:14px;align-items:center;padding:16px 18px}
+.hint-step .h-no{font-family:var(--mono);font-size:1.2rem;color:var(--ink-dim);text-align:center}
+.hint-step h4{font-family:var(--mono);font-size:.8rem;letter-spacing:.2em}
+.hint-step .h-cost{font-family:var(--mono);font-size:.66rem;color:var(--amb);letter-spacing:.1em}
+.hint-step .h-body{font-family:var(--mono);font-size:.8rem;color:var(--ink);margin-top:6px;line-height:1.6}
+.hint-step.locked .h-body{filter:blur(7px);user-select:none;pointer-events:none}
+/* ---------- PROMPT BLOCKS ---------- */
+.prompt-block{display:flex;flex-direction:column;gap:0;border-radius:var(--r);overflow:hidden;
+  background:#070b09;border:1px solid #1d2a22;box-shadow:0 22px 44px rgba(0,0,0,.5)}
+.pb-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#0d1410;border-bottom:1px solid #1d2a22;flex-wrap:wrap}
+.pb-head b{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;color:#9ff5c6;flex:1}
+.pb-body{padding:16px 18px;max-height:300px;overflow:auto;transition:max-height .4s ease;scrollbar-width:thin}
+.pb-body pre{font-family:var(--mono);font-size:.74rem;line-height:1.7;color:#b8ffce;white-space:pre-wrap;word-break:break-word}
+.pb-body pre .ph{color:#ffc24b}
+.prompt-block.xpand .pb-body{max-height:1500px}
+/* ---------- CHECKLIST / RING ---------- */
+.rq-wrap{display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:center}
+.ring{width:190px;height:190px;margin:auto;display:block}
+.ring .bgc{fill:none;stroke:var(--line);stroke-width:15}
+.ring .fgc{fill:none;stroke:url(#ringGrad);stroke-width:15;stroke-linecap:round;
+  stroke-dasharray:528;stroke-dashoffset:528;transition:stroke-dashoffset .6s cubic-bezier(.65,0,.35,1);transform:rotate(-90deg);transform-origin:center}
+.ring text{font-family:var(--mono);font-weight:800;font-size:1.7rem;fill:var(--ink)}
+.rq-list{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.rq{display:flex;gap:11px;align-items:center;padding:11px 14px;cursor:pointer;user-select:none;font-size:.86rem}
+.rq .bx{flex:none;width:22px;height:22px;border-radius:8px;background:var(--clay);box-shadow:var(--sh-in);
+  border:1px solid var(--line);display:grid;place-items:center;color:transparent;transition:all .25s}
+.rq.on .bx{background:linear-gradient(145deg,var(--grn),var(--grn2));color:var(--acc-ink);box-shadow:0 4px 12px rgba(23,217,123,.35)}
+/* ---------- DRAG & DROP ---------- */
+.dd-list{display:flex;flex-direction:column;gap:9px}
+.dd-item{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:13px 16px;
+  font-family:var(--mono);font-size:.85rem;letter-spacing:.06em;cursor:grab;transition:transform .15s,box-shadow .2s}
+.dd-item:active{cursor:grabbing}
+.dd-item .dd-pos{font-size:.72rem;color:var(--ink-dim);text-align:center}
+.dd-item.dragging{opacity:.4;transform:scale(.98)}
+.dd-item.over{outline:2px dashed var(--cyn);outline-offset:2px}
+.dd-item.good{border-color:rgba(43,255,136,.6)} .dd-item.bad{border-color:rgba(255,93,115,.55)}
+.dd-mv{display:flex;flex-direction:column;gap:4px}
+.dd-mv button{width:26px;height:22px;border-radius:7px;background:var(--clay);box-shadow:var(--sh-in);
+  border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-dim);font-size:.6rem}
+.dd-mv button:hover{color:var(--grn)}
+/* ---------- ETHICS SCENARIOS ---------- */
+.scn{display:flex;flex-direction:column;gap:12px}
+.scn .q{font-size:.9rem;color:var(--ink)}
+.scn .q b{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:var(--cyn);display:block;margin-bottom:6px}
+.scn-opts{display:flex;flex-direction:column;gap:7px}
+.scn-opt{text-align:left;font-family:var(--mono);font-size:.76rem;padding:10px 14px;border-radius:11px;
+  background:var(--clay);box-shadow:var(--sh-in);border:1px solid var(--line);transition:all .15s}
+.scn-opt:hover{transform:translateX(4px)}
+.scn-opt.ok{border-color:var(--grn);color:var(--grn)} .scn-opt.no{border-color:var(--red);color:var(--red);opacity:.75}
+.scn-ans{font-size:.8rem;color:var(--ink-dim);border-top:1px dashed var(--line);padding-top:10px}
+.scn-ans b{color:var(--grn);font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;display:block;margin-bottom:4px}
+html[data-theme="light"] .scn-ans b{color:#0a7a47}
+/* ---------- SEVERITY ---------- */
+.sev-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.sev{padding:18px 14px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.sev .dot-sev{width:16px;height:16px;border-radius:50%}
+.sev h4{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em}
+.sev p{font-size:.72rem;color:var(--ink-dim)}
+.s1c{background:#3ee6e0}.s2c{background:#2bff88}.s3c{background:#ffc24b}.s4c{background:#ff9d4d}.s5c{background:#ff5d73}
+/* ---------- FLAG ---------- */
+.flag-panel{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;padding:34px 26px}
+.flag-panel .f-title{font-family:var(--mono);letter-spacing:.3em;font-size:.72rem;color:var(--ink-dim)}
+.flag-input{width:min(480px,100%);text-align:center;font-family:var(--mono);font-size:1rem;letter-spacing:.06em;
+  background:#070b09;color:#b8ffce;border:1px solid #1f3a2b;border-radius:14px;padding:16px;
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.6)}
+.flag-input:focus{border-color:#2bff88;outline:none;box-shadow:0 0 0 3px rgba(43,255,136,.18),inset 0 2px 14px rgba(0,0,0,.6)}
+.flag-panel.success{animation:flagGlow 1.2s ease}
+@keyframes flagGlow{0%{box-shadow:0 0 0 rgba(43,255,136,0)}35%{box-shadow:0 0 90px rgba(43,255,136,.45)}100%{box-shadow:var(--sh)}}
+.burst{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.burst i{position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:2px;
+  background:var(--grn);animation:burst .9s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rr));opacity:0}}
+/* ---------- BEFORE/AFTER ---------- */
+.ba{display:grid;grid-template-columns:1fr 52px 1fr;gap:0;align-items:center}
+.ba-arrow{display:grid;place-items:center;color:var(--grn);font-size:1.5rem}
+html[data-theme="light"] .ba-arrow{color:#0a7a47}
+.finding-row{display:grid;grid-template-columns:128px 1fr;gap:4px 12px;font-size:.82rem;padding:5px 0;border-bottom:1px dashed var(--line)}
+.finding-row dt{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--ink-dim);padding-top:3px}
+.finding-row dd{color:var(--ink)}
+.rawline{font-family:var(--mono);font-size:1rem;color:var(--amb);text-align:center;padding:22px 12px}
+#s11 .card.after{transition:opacity .6s ease,transform .6s ease}
+#s11 .card.after.ghost{opacity:.28;transform:scale(.985)}
+/* ---------- OVERLAYS ---------- */
+.overlay{position:fixed;inset:0;z-index:70;display:none;background:rgba(4,8,6,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.overlay.open{display:flex;align-items:center;justify-content:center;padding:22px}
+.ov-card{background:var(--clay);box-shadow:var(--sh);border:1px solid var(--line);border-radius:26px;
+  max-width:1060px;width:100%;max-height:88vh;overflow:auto;padding:26px}
+.ov-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.ov-head h3{font-family:var(--mono);letter-spacing:.2em;font-size:.9rem}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ov-cell{padding:13px 12px;border-radius:14px;background:var(--clay2);box-shadow:var(--sh-sm);
+  border:1px solid var(--line);text-align:left;transition:all .15s;display:flex;flex-direction:column;gap:5px}
+.ov-cell:hover{transform:translateY(-3px)}
+.ov-cell .n{font-family:var(--mono);font-size:.62rem;color:var(--grn);letter-spacing:.14em}
+html[data-theme="light"] .ov-cell .n{color:#0a7a47}
+.ov-cell .t{font-size:.76rem;font-weight:600}
+.ov-cell.cur{outline:2px solid var(--cyn);outline-offset:1px}
+/* modal */
+#modal-root .ov-card{max-width:560px}
+#modalBody{font-size:.92rem;color:var(--ink);display:flex;flex-direction:column;gap:12px}
+#modalFoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+/* toast */
+#toasts{position:fixed;bottom:calc(var(--ftr) + 16px);left:50%;transform:translateX(-50%);z-index:90;
+  display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(480px,92vw)}
+.toast{font-family:var(--mono);font-size:.78rem;letter-spacing:.05em;padding:12px 20px;border-radius:14px;
+  background:var(--clay2);box-shadow:var(--sh);border:1px solid var(--line);
+  animation:toastIn .3s cubic-bezier(.3,1.4,.5,1);max-width:100%;text-align:center}
+.toast.ok{color:var(--grn);border-color:rgba(43,255,136,.45)}
+.toast.warn{color:var(--amb);border-color:rgba(255,194,75,.45)}
+.toast.err{color:var(--red);border-color:rgba(255,93,115,.45)}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.95)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.96)}}
+/* ---------- TRAINER DRAWER ---------- */
+#trainer{position:fixed;top:0;right:0;bottom:0;width:min(360px,94vw);z-index:80;
+  background:var(--bg2);border-left:1px solid var(--line);box-shadow:-24px 0 60px rgba(0,0,0,.5);
+  transform:translateX(105%);transition:transform .35s cubic-bezier(.22,.9,.3,1);display:flex;flex-direction:column}
+#trainer.open{transform:none}
+.t-bar{display:flex;align-items:center;gap:10px;padding:16px;border-bottom:1px solid var(--line)}
+.t-bar b{font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;flex:1}
+.t-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin}
+.t-sec{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--clay)}
+.t-sec h4{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--ink-dim)}
+.t-row{display:flex;gap:8px;flex-wrap:wrap}
+.t-row select,.t-row input{flex:1;min-width:110px;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;font-family:var(--mono);font-size:.76rem;color:var(--ink)}
+.t-btn{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;padding:9px 13px;border-radius:10px;
+  background:var(--clay2);box-shadow:var(--sh-sm);border:1px solid var(--line);transition:all .15s}
+.t-btn:hover{color:var(--grn);transform:translateY(-1px)}
+.t-btn.red:hover{color:var(--red)}
+.t-note{font-family:var(--mono);font-size:.6rem;color:var(--ink-dim);line-height:1.6}
+.pin-wrap{display:flex;flex-direction:column;gap:10px}
+.pin-wrap input{text-align:center;letter-spacing:.5em;font-family:var(--mono);font-size:1.1rem;
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--ink)}
+/* toggle rows in trainer */
+.tgl-line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em}
+/* ---------- BADGES ---------- */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+.bdg{padding:16px 12px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;transition:all .3s}
+.bdg .b-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.3rem;
+  background:var(--clay2);box-shadow:var(--sh-in);color:var(--ink-dim);border:1px solid var(--line)}
+.bdg b{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em}
+.bdg small{font-size:.64rem;color:var(--ink-dim)}
+.bdg.owned .b-ic{background:linear-gradient(145deg,rgba(43,255,136,.28),rgba(18,201,107,.1));color:var(--grn);
+  box-shadow:0 8px 20px rgba(23,217,123,.25),inset 0 1px 0 rgba(255,255,255,.15);border-color:rgba(43,255,136,.5)}
+.bdg:not(.owned){opacity:.55;filter:saturate(.2)}
+html[data-theme="light"] .bdg.owned .b-ic{color:#0a7a47}
+/* achievement pop */
+.achv-pop{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:6px}
+.achv-pop .a-ic{width:88px;height:88px;border-radius:26px;display:grid;place-items:center;font-size:2rem;
+  background:linear-gradient(145deg,rgba(43,255,136,.3),rgba(18,201,107,.08));color:var(--grn);
+  border:1px solid rgba(43,255,136,.55);box-shadow:0 0 40px rgba(43,255,136,.35);
+  animation:aPop .6s cubic-bezier(.3,1.8,.4,1)}
+html[data-theme="light"] .achv-pop .a-ic{color:#0a7a47}
+@keyframes aPop{0%{transform:scale(0) rotate(-14deg)}100%{transform:scale(1) rotate(0)}}
+.achv-pop .a-k{font-family:var(--mono);font-size:.62rem;letter-spacing:.34em;color:var(--amb)}
+.achv-pop b{font-family:var(--mono);font-size:1.2rem;letter-spacing:.08em}
+.achv-pop p{font-size:.8rem;color:var(--ink-dim)}
+/* ---------- MCQ ---------- */
+.mcq-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mcq-opt{text-align:left;font-size:.86rem;padding:13px 16px;display:flex;gap:10px;align-items:center}
+.mcq-opt .k{font-family:var(--mono);font-size:.7rem;color:var(--ink-dim);flex:none}
+.mcq-opt.ok{border-color:var(--grn)} .mcq-opt.ok .k{color:var(--grn)}
+.mcq-opt.no{border-color:var(--red);opacity:.6} .mcq-opt.no .k{color:var(--red)}
+/* ---------- CLOSING ---------- */
+#s12 .slide-inner{align-items:center;text-align:center}
+.outro-brand{display:flex;flex-direction:column;align-items:center;gap:8px}
+/* ---------- STATS ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{padding:18px 14px;text-align:center}
+.stat .v{font-family:var(--mono);font-size:1.5rem;font-weight:800;color:var(--grn)}
+.stat .l{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--ink-dim);margin-top:4px}
+html[data-theme="light"] .stat .v{color:#0a7a47}
+.bigdone{font-family:var(--mono);font-size:clamp(1.2rem,3vw,2rem);letter-spacing:.24em;color:var(--grn);
+  border:2px solid var(--grn);border-radius:18px;padding:18px 30px;display:inline-block;transform:rotate(-1.5deg);
+  box-shadow:0 0 34px rgba(43,255,136,.28);animation:stampPop .5s cubic-bezier(.5,1.8,.4,1)}
+html[data-theme="light"] .bigdone{color:#0a7a47;border-color:#0a7a47;box-shadow:var(--sh)}
+/* ---------- TAKEAWAYS ---------- */
+.tk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tk{padding:18px 16px;display:flex;flex-direction:column;gap:8px}
+.tk .n{font-family:var(--mono);font-size:.62rem;color:var(--ink-dim);letter-spacing:.2em}
+.tk b{font-size:.92rem;font-family:var(--mono);letter-spacing:.03em}
+/* ---------- HERMES PLACEHOLDER ---------- */
+.placeholder-zone{font-family:var(--mono);font-size:.78rem;line-height:1.9;color:var(--amb);
+  background:#151009;border:1px dashed rgba(255,194,75,.55);border-radius:14px;padding:18px 20px;white-space:pre-wrap}
+/* ---------- 7. RESPONSIVE / MOTION ---------- */
+@media (max-width:1060px){
+  .toolkit{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}
+  .pipe{grid-template-columns:repeat(3,1fr)}.tk-grid{grid-template-columns:repeat(2,1fr)}
+  .sev-grid{grid-template-columns:repeat(3,1fr)}.roe-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:820px){
+  .brand small,.kbd-hints,#hudStreak{display:none}
+  .hero-grid,.grid2,.split,.labwrap,.ba,.rq-wrap{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr 1fr}.rq-list{grid-template-columns:1fr}
+  .ba-arrow{transform:rotate(90deg);padding:6px}
+  .sb-row{grid-template-columns:26px 1fr 84px;grid-auto-rows:auto}
+  .sb-bar{grid-column:1/-1}.sb-del{display:none}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .toolkit,.grid3,.grid4,.pipe,.roe-grid,.sev-grid,.tk-grid,.stat-grid{grid-template-columns:1fr}
+  .mcq-opts{grid-template-columns:1fr}.chip-badges{display:none}
+  header{gap:8px;padding:0 10px}
+}
+body.no-anim *,body.no-anim *::before,body.no-anim *::after{
+  animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .beam,.ticker div,.wire{animation:none!important}
+}
+
+/* ---------- STEP GUIDE (HERMES) ---------- */
+.step-card{display:flex;flex-direction:column;gap:12px}
+.step-head{display:flex;gap:3px 12px;align-items:flex-start}
+.stepnum{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-family:var(--mono);font-weight:800;font-size:.82rem;background:linear-gradient(145deg,var(--grn),var(--grn2));color:var(--acc-ink);box-shadow:0 6px 14px rgba(23,217,123,.3)}
+.step-head h3{font-family:var(--mono);font-size:.8rem;letter-spacing:.1em;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:6px}
+.step-p{font-size:.84rem;color:var(--ink)}
+.step-p.dim{color:var(--ink-dim);font-size:.78rem}
+.glow{color:var(--grn)}
+html[data-theme="light"] .glow{color:#0a7a47}
+.cmdblk{background:#070b09;color:#b8ffce;font-family:var(--mono);font-size:.72rem;line-height:1.8;border:1px solid #1d2a22;border-radius:12px;padding:12px 16px;white-space:pre;overflow-x:auto;box-shadow:inset 0 2px 14px rgba(0,0,0,.55)}
+</style>
+</head>
+<body>
+<!-- ================= SVG ICON SPRITE ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12c96b"/><stop offset="1" stop-color="#3ee6e0"/>
+    </linearGradient>
+  </defs>
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 2l8 4.6v9.2L12 22l-8-4.9V6.6z" fill="none"/><circle cx="12" cy="9.6" r="2.1" fill="currentColor" stroke="none"/><path d="M12 11.4l-1.5 5h3L12 11.4z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.5A8.5 8.5 0 1 1 10.5 3.5a7 7 0 0 0 10 10z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
+  <symbol id="i-trainer" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.8-3.3 7.6-7 9-3.7-1.4-7-4.2-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 5c4-2.2 8 2.2 12 0v8c-4 2.2-8-2.2-12 0"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12L18.5 5.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><rect x="8" y="7" width="8" height="11" rx="4"/><path d="M9 7a3 3 0 0 1 6 0M12 3v2M3 13h5M16 13h5M5 19l4-2M15 17l4 2M5 7l4 2M15 9l4-2"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h6M10 16h6"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M9 20h6M4 7h16"/><path d="M7 7l-2.5 6a2.9 2.9 0 0 0 5 0L7 7zM17 7l-2.5 6a2.9 2.9 0 0 0 5 0L17 7z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v0"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10.5V17M12 7v.5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.5 6.6 7 .5-5.4 4.6 1.7 6.8L12 17.2 6.2 21l1.7-6.8L2.5 9.6l7-.5z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.8-3.3 7.6-7 9-3.7-1.4-7-4.2-7-9V6z"/></symbol>
+</svg>
+
+<div class="scanlines" aria-hidden="true"></div>
+<div class="beam" aria-hidden="true"></div>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="brand">
+    <span class="logo-badge"><svg class="ic" style="width:22px;height:22px"><use href="#i-logo"/></svg></span>
+    <div>
+      <b>HACKDOOR</b>
+      <small>Your Doorway to Learning Ethical Hacking</small>
+    </div>
+  </div>
+  <div class="hdr-mid">
+    <div id="secLabel" role="status">MISSION BRIEFING</div>
+    <div id="slideCount">SLIDE 01 / 12</div>
+  </div>
+  <div class="hud">
+    <span class="chip chip-xp" id="hudXP" title="Squad XP"><svg class="ic"><use href="#i-bolt"/></svg><span>0 XP</span></span>
+    <span class="chip chip-streak" id="hudStreak" title="Streak — broken if you spend a hint"><svg class="ic"><use href="#i-star"/></svg><span>STREAK ×0</span></span>
+    <button class="chip chip-badges" id="hudBadges" title="View badges"><svg class="ic"><use href="#i-shield"/></svg><span>0/7</span></button>
+    <button class="hbtn" id="btnTheme" aria-label="Toggle light and dark mode"><svg class="ic" id="themeIcon"><use href="#i-sun"/></svg><span class="tip">THEME</span></button>
+    <button class="hbtn" id="btnOverview" aria-label="Open slide overview"><svg class="ic"><use href="#i-grid"/></svg><span class="tip">OVERVIEW [O]</span></button>
+    <button class="hbtn" id="btnFull" aria-label="Toggle fullscreen"><svg class="ic"><use href="#i-full"/></svg><span class="tip">FULLSCREEN [F]</span></button>
+    <button class="hbtn" id="btnTrainer" aria-label="Open trainer panel"><svg class="ic"><use href="#i-trainer"/></svg><span class="tip">TRAINER</span></button>
+    <button class="hbtn" id="btnReset" aria-label="Reset workshop progress"><svg class="ic"><use href="#i-reset"/></svg><span class="tip">RESET PROGRESS</span></button>
+  </div>
+</header>
+<div id="progWrap" role="progressbar" aria-label="Presentation progress"><div id="progBar"></div></div>
+
+<main id="deck">
+
+<!-- ============ SLIDE 01 — HERO ============ -->
+<section class="slide" id="s1" data-section="MISSION BRIEFING" aria-label="Slide 1: HACKDOOR hero">
+  <div class="slide-inner">
+    <div class="hero-grid">
+      <div style="display:flex;flex-direction:column;gap:18px;justify-content:center">
+        <span class="tag g">MISSION: HACKDOOR // OPERATION LOCAL LAB</span>
+        <h1 class="glitch" data-text="HACKDOOR">HACKDOOR</h1>
+        <p class="hero-tag">Your Doorway to Learning Ethical Hacking</p>
+        <p class="hero-sub">BEGINNER ETHICAL HACKING WORKSHOP</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" id="btnStart"><svg class="ic"><use href="#i-play"/></svg>START MISSION</button>
+          <button class="btn btn-ghost" id="btnEnterLab"><svg class="ic"><use href="#i-grid"/></svg>ENTER LAB</button>
+        </div>
+        <div class="card card-in" style="padding:16px 18px">
+          <dl class="status-card">
+            <dt>STATUS</dt><dd id="heroStatus">■ STANDBY — AWAITING ANALYSTS</dd>
+            <dt>ROLE</dt><dd>JUNIOR SECURITY ANALYST</dd>
+            <dt>DIFFICULTY</dt><dd>BEGINNER-FRIENDLY</dd>
+            <dt>SCOPE</dt><dd>AUTHORIZED LOCAL LAB ONLY</dd>
+          </dl>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="term" data-term="hero">
+          <div class="term-head">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="term-title">hackdoor@lab: ~/mission</span>
+            <button class="tbtn" data-act="copy"><svg class="ic"><use href="#i-copy"/></svg>COPY</button>
+            <button class="tbtn" data-act="clear">CLEAR</button>
+            <button class="tbtn" data-act="replay"><svg class="ic"><use href="#i-play"/></svg>REPLAY</button>
+          </div>
+          <div class="term-body" aria-live="polite"></div>
+          <div class="term-note">SIMULATED TERMINAL — SAFE OUTPUT ONLY</div>
+        </div>
+        <div class="ticker" aria-hidden="true"><div>
+          AUTHORIZED LAB ONLY&nbsp;·&nbsp;RECON&nbsp;·&nbsp;SCAN&nbsp;·&nbsp;ENUMERATE&nbsp;·&nbsp;VALIDATE&nbsp;·&nbsp;EVIDENCE&nbsp;·&nbsp;REPORT&nbsp;·&nbsp;ETHICS FIRST&nbsp;·&nbsp;ASK BEFORE EXPANDING SCOPE&nbsp;·&nbsp;AUTHORIZED LAB ONLY&nbsp;·&nbsp;RECON&nbsp;·&nbsp;SCAN&nbsp;·&nbsp;ENUMERATE&nbsp;·&nbsp;VALIDATE&nbsp;·&nbsp;EVIDENCE&nbsp;·&nbsp;REPORT&nbsp;·&nbsp;ETHICS FIRST&nbsp;·&nbsp;ASK BEFORE EXPANDING SCOPE&nbsp;·&nbsp;
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ SLIDE 02 — RULES OF ENGAGEMENT ============ -->
+<section class="slide" id="s2" data-section="MISSION BRIEFING" aria-label="Slide 2: Rules of engagement">
+  <div class="slide-inner">
+    <p class="kicker">LEGAL + ETHICAL BOUNDARIES</p>
+    <h2>Rules of <span class="hi">Engagement</span></h2>
+    <p class="lede">Ethical hacking is defined by <b>permission</b>. The same techniques without authorization are simply attacks. These rules are non-negotiable — in this workshop and in your career.</p>
+    <div class="roe-grid">
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>Authorized targets only.</b> If it isn't on the approved list, it doesn't exist.</span></div>
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>Provided lab environment only</b> — no attacks against public systems, ever.</span></div>
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>No credential theft from real users.</b> Lab credentials stay in the lab.</span></div>
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>No persistence outside the lab</b> and no destructive actions.</span></div>
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>Trainer says STOP → you stop.</b> Immediately, no questions, no exceptions.</span></div>
+      <div class="card lift roe"><svg class="ic"><use href="#i-x"/></svg><span><b>Document what you do</b> and <b>ask before expanding scope.</b></span></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <h3 style="font-family:var(--mono);letter-spacing:.16em;font-size:.85rem;display:flex;gap:8px;align-items:center"><svg class="ic" style="color:var(--grn)"><use href="#i-scale"/></svg>ETHICS CHECK — CLEARANCE REQUIRED</h3>
+      <div class="eth-check">
+        <label class="tgl-row"><span class="tgl" role="checkbox" aria-checked="false" aria-label="I will only test systems I am explicitly authorized to test" tabindex="0"></span><span>I will <b>only</b> test systems I am explicitly authorized to test.</span></label>
+        <label class="tgl-row"><span class="tgl" role="checkbox" aria-checked="false" aria-label="I will stop the moment a trainer says stop" tabindex="0"></span><span>I will <b>stop immediately</b> when a trainer says stop.</span></label>
+        <label class="tgl-row"><span class="tgl" role="checkbox" aria-checked="false" aria-label="I will document my actions honestly and report everything" tabindex="0"></span><span>I will <b>document honestly</b> and report everything I find — including my mistakes.</span></label>
+      </div>
+      <div><span class="stamp" id="ethicsStamp">✓ CLEARED FOR LAB ACCESS</span></div>
+    </div>
+    <div class="takeaway"><b>TAKEAWAY</b><p>Permission first. Every engagement begins with written authorization and a defined scope.</p></div>
+  </div>
+</section>
+<!-- ============ SLIDE 03 — LAB ARCHITECTURE ============ -->
+<section class="slide" id="s3" data-section="LAB SETUP" aria-label="Slide 3: Lab architecture">
+  <div class="slide-inner">
+    <p class="kicker">KNOW YOUR BATTLEGROUND</p>
+    <h2>Lab <span class="hi">Architecture</span></h2>
+    <p class="lede">Two intentionally vulnerable targets, each sealed inside its own <b>Docker container</b> on your machine. Nothing here routes to the internet — and nothing should.</p>
+    <div class="labwrap">
+      <div class="card lab">
+        <h4>ENV A — NETWORK LEVEL <span class="tag r" style="margin-left:8px">TARGET: METASPLOITABLE2</span></h4>
+        <div class="node attacker"><svg class="ic" style="font-size:1.25rem"><use href="#i-radar"/></svg><div><b>KALI LINUX</b><small>ATTACKER — YOUR TEST SYSTEM</small></div></div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="wire-label">DOCKER BRIDGE NETWORK — LOCAL + ISOLATED</div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="node target"><svg class="ic" style="font-size:1.25rem"><use href="#i-bug"/></svg><div><b>METASPLOITABLE2 <span class="tag r" style="margin-left:6px">CONTAINER</span></b><small>TARGET · ITS BRIDGE IP = [TARGET_IP]</small></div></div>
+      </div>
+      <div class="card lab">
+        <h4>ENV B — APPLICATION LEVEL <span class="tag r" style="margin-left:8px">TARGET: JUICE SHOP</span></h4>
+        <div class="node attacker"><svg class="ic" style="font-size:1.25rem"><use href="#i-radar"/></svg><div><b>KALI LINUX</b><small>ATTACKER — YOUR TEST SYSTEM</small></div></div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="wire-label">LOCALHOST PORT MAPPING — LOOPBACK ONLY</div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="node target"><svg class="ic" style="font-size:1.25rem"><use href="#i-bug"/></svg><div><b>OWASP JUICE SHOP <span class="tag r" style="margin-left:6px">CONTAINER</span></b><small>TARGET · 127.0.0.1:3000 ONLY</small></div></div>
+      </div>
+    </div>
+    <div class="warn"><svg class="ic"><use href="#i-info"/></svg>AUTHORIZED LAB ONLY — BOTH TARGETS ARE YOUR OWN LOCAL CONTAINERS, PURPOSE-BUILT TO BE BROKEN SAFELY. ANY OTHER SYSTEM IS OUT OF SCOPE BY DEFAULT.</div>
+    <div class="takeaway"><b>KEY CONCEPT</b><p><b>Attacker</b> (Kali) → <b>isolated local path</b> (Docker bridge / loopback) → <b>target containers</b>. Isolation is what makes practice safe — keep both containers local-only, always.</p></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 04 — TOOLKIT ============ -->
+<section class="slide" id="s4" data-section="LAB SETUP" aria-label="Slide 4: Toolkit">
+  <div class="slide-inner">
+    <p class="kicker">YOUR INSTRUMENT PANEL</p>
+    <h2>The Analyst <span class="hi">Toolkit</span></h2>
+    <p class="lede">A tool is a question you ask the target. Great analysts know <b>why</b> they're asking before they ask.</p>
+    <div class="toolkit">
+      <div class="card lift tool"><span class="t-badge">KL</span><h4>Kali Linux</h4><p>A ready-made security workstation packed with testing tools. Your base of operations.</p><span class="tag c">PLATFORM</span></div>
+      <div class="card lift tool"><span class="t-badge">NM</span><h4>Nmap</h4><p>Discovers hosts, open ports, and running services. The map-maker of Level 02.</p><span class="tag g">SCAN</span></div>
+      <div class="card lift tool"><span class="t-badge">NC</span><h4>Netcat</h4><p>The "network Swiss-army knife" — connect to a port and talk to the service directly.</p><span class="tag g">CONNECT</span></div>
+      <div class="card lift tool"><span class="t-badge">DT</span><h4>Browser DevTools</h4><p>Built into your browser: inspect pages, requests, and client-side code. Free x-ray vision.</p><span class="tag g">WEB</span></div>
+      <div class="card lift tool"><span class="t-badge">BP</span><h4>Burp Suite</h4><p>A web-traffic workbench: watch, modify, and replay requests between browser and app.</p><span class="tag g">WEB</span></div>
+      <div class="card lift tool"><span class="t-badge">MS</span><h4>Metasploit</h4><p>A framework of known-exploit modules for <i>validating</i> vulnerabilities — in labs like ours.</p><span class="tag r">EXPLOIT</span></div>
+      <div class="card lift tool"><span class="t-badge">GB</span><h4>Gobuster / Dirsearch</h4><p>Discover hidden directories and files on web targets by trying wordlists.</p><span class="tag g">ENUMERATE</span></div>
+      <div class="card lift tool"><span class="t-badge">CU</span><h4>curl</h4><p>Speak HTTP from the terminal — send exact requests, see exact responses.</p><span class="tag g">WEB</span></div>
+      <div class="card lift tool"><span class="t-badge">DK</span><h4>Docker</h4><p>Runs BOTH intentionally vulnerable targets — Metasploitable2 + Juice Shop — as sealed containers on your machine. Commands on the Hermes slide.</p><span class="tag c">LAB</span></div>
+      <div class="card lift tool"><span class="t-badge">AI</span><h4>AI Co-Pilot</h4><p>Explains output, suggests hypotheses, structures reports. You stay the pilot — next slide.</p><span class="tag a">ASSIST</span></div>
+    </div>
+    <div class="takeaway"><b>MENTOR NOTE</b><p>Beginners collect tools. Professionals understand them. For every command today, be able to say what it does and why it's in scope.</p></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 05 — AI CO-PILOT ============ -->
+<section class="slide" id="s5" data-section="LAB SETUP" aria-label="Slide 5: AI as your co-pilot">
+  <div class="slide-inner">
+    <p class="kicker">RESPONSIBLE AI USE</p>
+    <h2>AI as Your <span class="hi">Co-Pilot</span></h2>
+    <p class="lede">Used well, AI is a patient senior analyst sitting next to you. Used badly, it's a confident stranger with root access to your judgement.</p>
+    <div class="split">
+      <div class="card lift">
+        <h3><svg class="ic" style="color:var(--grn)"><use href="#i-check"/></svg>AI CAN HELP WITH</h3>
+        <ul class="tick">
+          <li>Explaining commands line by line</li>
+          <li>Interpreting scan output in plain language</li>
+          <li>Suggesting hypotheses to test next</li>
+          <li>Explaining how a vulnerability works</li>
+          <li>Structuring your notes and evidence</li>
+          <li>Reviewing evidence for gaps</li>
+          <li>Drafting report language — for you to verify</li>
+        </ul>
+      </div>
+      <div class="card lift">
+        <h3><svg class="ic" style="color:var(--red)"><use href="#i-x"/></svg>AI MUST <b>NOT</b> REPLACE</h3>
+        <ul class="tick no">
+          <li>Authorization — AI can't grant permission</li>
+          <li>Human validation of every finding</li>
+          <li>Scope decisions — those belong to humans</li>
+          <li>Evidence verification — reproduction is your job</li>
+          <li>Ethical judgement — always yours, never delegated</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote">“AI suggests. The human verifies.”</div>
+    <div class="takeaway"><b>RULE OF THUMB</b><p>If the AI tells you to touch anything outside the authorized lab, the correct response is no — and tell your trainer.</p></div>
+  </div>
+</section>
+
+
+<!-- ============ SLIDE 06 — LEVEL 02 SCANNING ============ -->
+<section class="slide" id="s6" data-section="LEVEL 02 // SCAN" data-level="scan" aria-label="Slide 6: Level 2 Scanning">
+  <div class="slide-inner">
+    <div class="level-head">
+      <span class="lvl-chip">LEVEL 02 — SCANNING</span><span class="xp-chip">REWARD +150 XP // BADGE: PORT DETECTIVE</span><span class="done-chip"><svg class="ic"><use href="#i-check"/></svg>COMPLETE</span>
+    </div>
+    <h2>Scanning: <span class="hi">Mapping the Doors</span></h2>
+    <div class="grid2">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <ul class="tick">
+          <li><b>Port</b> — a numbered door a service listens behind (0–65535).<small>Port 22 usually means SSH, 80 means web.</small></li>
+          <li><b>Service</b> — the program answering at that door.<small>FTP, SSH, HTTP, databases…</small></li>
+          <li><b>Version</b> — which edition of the service.<small>Versions turn "a door" into "a known, documentable lead".</small></li>
+          <li><b>TCP vs UDP</b> — two delivery styles.<small>TCP = registered mail (confirmed). UDP = postcards (fast, unconfirmed). Beginners start with TCP.</small></li>
+        </ul>
+        <div class="card card-in" style="padding:14px 16px">
+          <p style="font-family:var(--mono);font-size:.74rem;color:var(--ink-dim);line-height:1.7">WHY SCAN? You can't defend or assess what you can't see. Scanning converts a mystery box into an inventory — the foundation of everything after this.</p>
+        </div>
+      </div>
+      <div class="term" data-term="nmap">
+        <div class="term-head">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="term-title">analyst@kali: ~/lab</span>
+          <button class="tbtn" data-act="copy"><svg class="ic"><use href="#i-copy"/></svg>COPY</button>
+          <button class="tbtn" data-act="clear">CLEAR</button>
+          <button class="tbtn" data-act="replay"><svg class="ic"><use href="#i-play"/></svg>REPLAY</button>
+        </div>
+        <div class="term-body" aria-live="polite"></div>
+        <div class="term-note">EXAMPLE OUTPUT — EXECUTE ONLY AGAINST THE AUTHORIZED LAB TARGET. PLACEHOLDER [TARGET_IP] = YOUR LAB VM.</div>
+      </div>
+    </div>
+    <div class="challenge">
+      <h3>◈ QUIZ — SPOT THE INTERESTING PORTS</h3>
+      <p style="font-size:.88rem;color:var(--ink-dim)">From the simulated scan: <b>two</b> services are famous high-value leads on this exact training VM because of their <b>specific versions</b>. Select both, then verify.</p>
+      <div class="plist" id="portQuiz" role="group" aria-label="Select two interesting services"></div>
+      <div class="field"><button class="btn btn-primary" id="btnPortSubmit" style="padding:11px 22px">VERIFY SELECTION</button><p class="fb" id="portFb" aria-live="polite" style="align-self:center"></p></div>
+    </div>
+    <div class="takeaway"><b>TAKEAWAY</b><p>An open port is an invitation to ask questions. A specific version is a lead worth documenting.</p></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 07 — LEVEL 03 ENUMERATION ============ -->
+<section class="slide" id="s7" data-section="LEVEL 03 // ENUMERATION" data-level="enum" aria-label="Slide 7: Level 3 Enumeration">
+  <div class="slide-inner">
+    <div class="level-head">
+      <span class="lvl-chip">LEVEL 03 — ENUMERATION</span><span class="xp-chip">REWARD +200 XP // BADGE: ENUMERATION EXPERT</span><span class="done-chip"><svg class="ic"><use href="#i-check"/></svg>COMPLETE</span>
+    </div>
+    <h2>Enumeration: <span class="hi">From Map to Leads</span></h2>
+    <div class="grid2">
+      <ul class="tick">
+        <li><b>Service enumeration</b> — ask each service its story.<small>Banners, shares, users, configs — FTP anonymous? SMB shares listed?</small></li>
+        <li><b>Web enumeration</b> — walk the site like a cartographer.<small>Pages, forms, endpoints, plus directory discovery (Gobuster/Dirsearch on in-scope targets only).</small></li>
+        <li><b>SSH / FTP / SMB</b> — three protocols you'll meet today.<small>SSH = remote shell. FTP = file transfer. SMB = Windows file sharing.</small></li>
+        <li><b>Version identification</b> — the bridge from scan to vulnerability research.<small>Exact versions are what you search advisories for.</small></li>
+        <li><b>Evidence collection</b> — screenshot, log, label.<small>If it isn't captured, it didn't happen.</small></li>
+      </ul>
+      <div class="card lift">
+        <h3 style="font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;margin-bottom:10px">ENUMERATION LOOP</h3>
+        <ol style="display:flex;flex-direction:column;gap:8px;font-size:.86rem;color:var(--ink-dim);list-style:none;counter-reset:el">
+          <li style="counter-increment:el"><span class="tag g">1</span> Pick one service from your scan.</li>
+          <li><span class="tag g">2</span> Ask it polite questions (banner/version/features).</li>
+          <li><span class="tag g">3</span> Write down exactly what it told you.</li>
+          <li><span class="tag g">4</span> Rank it: boring / interesting / hot lead.</li>
+          <li><span class="tag g">5</span> Repeat — evidence grows each loop.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="challenge">
+      <h3>◈ CHALLENGE 03 — PRIORITIZE THE ATTACK SURFACE <button class="tbtn hint-btn" data-hint="enum" style="margin-left:auto">HINT −10 XP</button></h3>
+      <p style="font-size:.88rem;color:var(--ink-dim)">Turn raw scan results into a prioritized attack surface: pick your <b>top 3</b> services to enumerate first, most promising lead at the top of your mental list. Then verify.</p>
+      <div class="plist" id="enumQuiz" role="group" aria-label="Select three services to enumerate first"></div>
+      <div class="field"><button class="btn btn-primary" id="btnEnumSubmit" style="padding:11px 22px">VERIFY PRIORITIES</button><p class="fb" id="enumFb" aria-live="polite" style="align-self:center"></p></div>
+    </div>
+    <div class="takeaway"><b>TAKEAWAY</b><p>Scanning finds doors; enumeration learns what's behind them. Prioritize by evidence, not vibes.</p></div>
+  </div>
+</section>
+
+
+
+<!-- ============ SLIDE 08 — HERMES AGENT: INSTALL + CONFIGURE ============ -->
+<section class="slide" id="s8" data-section="AI OPS" aria-label="Slide 8: Hermes Agent step-by-step setup">
+  <div class="slide-inner">
+    <p class="kicker">AI-ASSISTED SECURITY WORKFLOW // VERIFIED SETUP GUIDE</p>
+    <h2>Hermes Agent: <span class="hi">Install + Configure</span></h2>
+    <p class="lede"><b>Hermes Agent</b> is the open-source, self-improving AI agent by <b>Nous Research</b> — your co-pilot for this lab. Six beginner-proof steps below. Commands verified against official sources on <b>2026-09-29</b> — re-verify before every delivery; agent tooling moves fast.</p>
+    <div class="warn"><svg class="ic"><use href="#i-info"/></svg>OFFICIAL SOURCES OF TRUTH — REPO: <span class="mono glow">github.com/NousResearch/hermes-agent</span> · DOCS: <span class="mono glow">hermes-agent.nousresearch.com/docs</span> — if any blog disagrees, the repo wins.</div>
+
+    <div class="card step-card">
+      <div class="step-head"><span class="stepnum">1</span><h3>GROUND RULES + PREREQUISITES <span class="tag g">~30 SEC TO READ</span></h3></div>
+      <ul class="tick">
+        <li><b>One agent, one job:</b> Hermes reasons and suggests — <b>you approve every real action</b>. Never give it an unrestricted target list, and never let it leave the authorized lab.</li>
+        <li><b>You need:</b> Git installed · an internet connection for the install (a few minutes) · admin rights · a few GB of free disk.</li>
+        <li><b>No Python on your machine?</b> Fine — the installer sets up Python 3.11+, Node.js and friends for you. Git is the only true prerequisite.</li>
+        <li><b>Workshop rule (it is a security workshop!):</b> we download the installer, <b>read it</b>, then run it. Never blind-pipe scripts — make it a habit.</li>
+      </ul>
+    </div>
+
+    <div class="grid2">
+      <div class="card step-card">
+        <div class="step-head"><span class="stepnum">2</span><h3>INSTALL — macOS <span class="tag c">TERMINAL APP</span></h3></div>
+        <p class="step-p">Open <b>Terminal</b> (or iTerm / Warp). Download, read, run:</p>
+        <div class="cmdblk">curl -fsSLO https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh
+less install.sh        # read it - press q to exit
+bash install.sh
+source ~/.zshrc          # reload shell (macOS default)</div>
+        <p class="step-p dim">Shortcut (same official script, one line):<br><span class="mono glow">curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash</span></p>
+      </div>
+      <div class="card step-card">
+        <div class="step-head"><span class="stepnum">2</span><h3>INSTALL — WINDOWS <span class="tag c">TWO WAYS</span></h3></div>
+        <p class="step-p"><b>Way 1 — WSL2 (recommended):</b> in an <b>admin PowerShell</b> run <span class="mono glow">wsl --install</span> → restart → open the new <b>Ubuntu</b> app → run the <b>exact same commands as macOS</b>, ending with <span class="mono glow">source ~/.bashrc</span>.</p>
+        <p class="step-p"><b>Way 2 — native Windows (early beta):</b> run this in <b>PowerShell</b> (not cmd):</p>
+        <div class="cmdblk">irm https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.ps1 | iex</div>
+        <p class="step-p dim">"Early beta" = fewer road miles: e.g. the browser dashboard's chat terminal pane is still WSL2-only anyway. When in doubt, use WSL2.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card step-card">
+        <div class="step-head"><span class="stepnum">3</span><h3>PROVE THE INSTALL WORKED</h3></div>
+        <div class="cmdblk">hermes version
+hermes doctor</div>
+        <p class="step-p dim"><span class="mono glow">hermes doctor</span> is the built-in health check — green lines mean ready. Error "command not found"? You skipped the <span class="mono glow">source ~/.zshrc</span> / <span class="mono glow">~/.bashrc</span> reload in step 2.</p>
+      </div>
+      <div class="card step-card">
+        <div class="step-head"><span class="stepnum">4</span><h3>CONFIGURE THE MODEL <span class="tag a">KEYS STAY PRIVATE</span></h3></div>
+        <div class="cmdblk">hermes setup        # guided wizard: provider → model → key
+hermes model        # switch provider/model later
+hermes config       # review current settings
+hermes setup --portal   # Nous Portal single-sign-in route</div>
+        <ul class="tick" style="margin-top:10px">
+          <li>Secrets live in <span class="mono glow">~/.hermes/.env</span>; settings in <span class="mono glow">~/.hermes/config.yaml</span>. Never paste API keys into chat, tickets — or this deck.</li>
+          <li><b>Air-tight lab option:</b> point Hermes at a local model server (e.g. Ollama on your own machine) so no lab data ever leaves the host.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card step-card">
+      <div class="step-head"><span class="stepnum">5</span><h3>START THE LAB — BOTH TARGETS ARE DOCKER CONTAINERS <span class="tag r">AUTHORIZED LAB ONLY</span></h3></div>
+      <div class="grid2" style="margin-top:4px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <p class="step-p"><b>Juice Shop</b> — official OWASP image <span class="tag g">OFFICIAL</span>:</p>
+          <div class="cmdblk">docker pull bkimminich/juice-shop
+docker run --rm -d --name juice-shop   -p 127.0.0.1:3000:3000 bkimminich/juice-shop
+# browse http://localhost:3000 → your [JUICE_SHOP_URL]</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <p class="step-p"><b>Metasploitable2</b> — long-standing <b>community</b> image <span class="tag a">TRAINER PINS + VERIFIES DIGEST</span>:</p>
+          <div class="cmdblk">docker pull tleemcjr/metasploitable2
+docker run -d -it --name msf2 tleemcjr/metasploitable2:latest   sh -c "/bin/services.sh && bash"
+docker inspect -f '{{.NetworkSettings.IPAddress}}' msf2
+# printed container IP = your authorized [TARGET_IP]</div>
+        </div>
+      </div>
+      <p class="step-p dim">Rapid7 ships <b>no official Metasploitable container</b> — the image above is the widely used community one, so the trainer verifies + pins a digest before class. Keep everything bound to 127.0.0.1 / the private Docker bridge, with no internet egress.</p>
+    </div>
+
+    <div class="card step-card">
+      <div class="step-head"><span class="stepnum">6</span><h3>LOCK THE SCOPE + TRAP TEST <span class="tag g">THE INTERVIEW</span></h3></div>
+      <ul class="tick">
+        <li><b>A.</b> Start a session: <span class="mono glow">hermes</span></li>
+        <li><b>B.</b> Paste <b>PROMPT A</b> (next slide) with the real <span class="mono glow">[TARGET_IP]</span> from step 5 filled in.</li>
+        <li><b>C.</b> Expected good behavior: the agent <b>restates the scope and waits for your confirmation</b>. If it doesn't — stop: the prompt or config needs fixing before anything touches the lab.</li>
+        <li><b>D.</b> Trap test: ask it to scan any out-of-scope host. It must <b>refuse and restate scope</b>. That's your green light to begin.</li>
+      </ul>
+    </div>
+
+    <div class="placeholder-zone" style="font-size:.7rem">TRAINER VERIFICATION LOG — COMPLETE + REPLACE BEFORE DELIVERY:
+[ ] install commands re-checked against the repo README (github.com/NousResearch/hermes-agent)
+[ ] quickstart re-checked at hermes-agent.nousresearch.com/docs
+[ ] Metasploitable2 image digest pinned → [INSERT PINNED DIGEST HERE]
+[ ] steps 1–6 rehearsed end-to-end on BOTH Windows and macOS</div>
+
+    <div class="takeaway"><b>TAKEAWAY</b><p>Verify source → read the script → install → <b>doctor</b> → configure → containers up → scope locked → trap test passed. Only then is your co-pilot on duty.</p></div>
+  </div>
+</section>
+<!-- ============ SLIDE 09 — AI PROMPT A: METASPLOITABLE2 ============ -->
+<section class="slide" id="s9" data-section="AI OPS" aria-label="Slide 9: AI pentest prompt A, Metasploitable2">
+  <div class="slide-inner">
+    <p class="kicker">COPY-READY // SCOPED // HUMAN-IN-THE-LOOP</p>
+    <div class="level-head"><span class="lvl-chip">PROMPT A</span><h2 style="margin:0">Metasploitable2 <span class="hi">Docker Lab Pentest</span></h2></div>
+    <p class="lede">Paste this into your AI assistant when working the Metasploitable2 container. Replace the bracketed placeholders. The prompt forces scope discipline, a professional workflow, and a human signature on every finding.</p>
+    <div class="prompt-block" data-prompt="A">
+      <div class="pb-head">
+        <b>PROMPT A — METASPLOITABLE2 DOCKER LAB PENTEST</b>
+        <span class="tag r" style="border-color:rgba(255,93,115,.5)">SCOPE LOCKED</span>
+        <button class="tbtn pb-copy"><svg class="ic"><use href="#i-copy"/></svg>COPY</button>
+        <button class="tbtn pb-reset">RESET</button>
+        <button class="tbtn pb-expand">EXPAND / COLLAPSE</button>
+      </div>
+      <div class="pb-body"><pre>ROLE
+You are an AI penetration-testing co-pilot assisting a supervised beginner training exercise. You suggest; a human analyst (me) verifies and executes. You never act autonomously. You are the co-pilot, not the pilot.
+
+AUTHORIZATION &amp; SCOPE (MANDATORY CONFIRM FIRST)
+- Authorized target: ONE (1) intentionally vulnerable training target — Metasploitable2 running as a local Docker container, reachable at [TARGET_IP] on the isolated lab network [LAB_NETWORK] (container bridge IP or a mapped localhost port — nothing else is in scope).
+- Tester: [TESTER_NAME] | Date: [DATE] | Organization: [ORGANIZATION] | Engagement ID: [ENGAGEMENT_ID]
+- Before any testing step: restate this scope back to me exactly, and wait for my written confirmation.
+- If scope is ever unclear or I mention any host other than [TARGET_IP]: STOP and ask.
+
+HARD SAFETY CONSTRAINTS (NEVER VIOLATE)
+- No internet targets. No third-party systems. No host other than [TARGET_IP].
+- No persistence mechanisms. No destructive actions. No denial-of-service.
+- No credential attacks against anything outside the lab VM. Never request real credentials.
+- Ask for my explicit confirmation before ANY potentially disruptive action (exploit attempts, service restarts, config changes).
+- Every finding must be verified by me before it may appear in the report.
+
+STRUCTURED WORKFLOW (ONE STEP AT A TIME)
+1. Recon — confirm the host is reachable and in scope; note expected services.
+2. Port &amp; service discovery — propose the command, explain each flag, wait for my approval, then interpret the output I paste back.
+3. Enumeration — versions, shares, users, directories, misconfigurations; prioritize by evidence.
+4. Vulnerability identification — map observed versions/services to candidate vulnerabilities with plain-language reasoning.
+5. Controlled validation — propose the least-disruptive validation per candidate; one at a time; wait for my go-ahead.
+6. Evidence collection — tell me exactly what to capture (command output, screenshots) and help me label each artifact.
+7. Risk analysis — severity with CVSS-style reasoning (vector, exploitability, impact), always justified by collected evidence.
+8. Remediation — realistic, prioritized fixes for each confirmed finding.
+9. Report generation — help me draft the report below; I review, correct, and finalize every word.
+
+REQUIRED REPORT STRUCTURE
+Executive Summary / Scope / Rules of Engagement / Methodology / Asset Inventory / Attack Surface / Findings (per finding: Severity, CVSS-style reasoning, Technical Evidence, Reproduction Steps, Business Impact, Risk, Remediation, Validation status) / Limitations / Conclusion / Appendix (complete evidence log).
+
+INTERACTION RULES
+- Beginner mode: define every technical term you use in one short sentence.
+- Explain WHAT and WHY before HOW. Never dump a chain of commands without rationale.
+- If asked to act outside [TARGET_IP], refuse and restate the scope.
+- Maintain a running evidence log and findings list in chat; remind me to save artifacts locally.
+
+Begin now by restating the scope and asking for my confirmation.</pre></div>
+    </div>
+    <div class="warn"><svg class="ic"><use href="#i-info"/></svg>THIS PROMPT IS SCOPED TO YOUR LOCAL METASPLOITABLE2 CONTAINER. DO NOT RETARGET IT.</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 — AI PROMPT B: JUICE SHOP ============ -->
+<section class="slide" id="s10" data-section="AI OPS" aria-label="Slide 10: AI pentest prompt B, OWASP Juice Shop">
+  <div class="slide-inner">
+    <p class="kicker">COPY-READY // SCOPED // HUMAN-IN-THE-LOOP</p>
+    <div class="level-head"><span class="lvl-chip">PROMPT B</span><h2 style="margin:0">Juice Shop <span class="hi">Local Docker Pentest</span></h2></div>
+    <p class="lede">A separate prompt for the web-application track — OWASP Juice Shop self-hosted in Docker. Different target, same discipline. (Placeholder corrected: <span class="mono" style="color:var(--grn)">[JUICE_SHOP_URL]</span>.)</p>
+    <div class="prompt-block" data-prompt="B">
+      <div class="pb-head">
+        <b>PROMPT B — OWASP JUICE SHOP LOCAL DOCKER PENTEST</b>
+        <span class="tag r" style="border-color:rgba(255,93,115,.5)">SCOPE LOCKED</span>
+        <button class="tbtn pb-copy"><svg class="ic"><use href="#i-copy"/></svg>COPY</button>
+        <button class="tbtn pb-reset">RESET</button>
+        <button class="tbtn pb-expand">EXPAND / COLLAPSE</button>
+      </div>
+      <div class="pb-body"><pre>ROLE
+You are an AI web-application security co-pilot for a supervised beginner training exercise. You suggest hypotheses and explain; a human (me) decides, executes, and verifies.
+
+AUTHORIZATION &amp; SCOPE (MANDATORY CONFIRM FIRST)
+- Authorized target: ONE (1) intentionally vulnerable training application — OWASP Juice Shop, self-hosted by me in Docker at [JUICE_SHOP_URL] (container port [DOCKER_PORT]).
+- Tester: [TESTER_NAME] | Date: [DATE] | Engagement ID: [ENGAGEMENT_ID]
+- Restate this scope and wait for my written confirmation before any testing step.
+- If scope is ever unclear, or I mention any other URL, host, or port: STOP and ask.
+
+HARD SAFETY CONSTRAINTS (NEVER VIOLATE)
+- All activity is restricted to [JUICE_SHOP_URL]. No external systems, APIs, CDNs, or third-party services.
+- Do not touch other localhost ports or unrelated local services. Never expand scope without explicit new authorization from me.
+- No destructive testing: no data deletion or corruption beyond sandbox-safe actions the app itself offers, no denial-of-service, no high-rate automated scanning.
+- No payloads beyond the minimum needed to prove an issue. Ask before any state-changing request.
+- A human verifies every finding before it enters the report.
+
+STRUCTURED WORKFLOW (ONE HYPOTHESIS AT A TIME)
+1. Confirm scope and that the container is mine, local, and isolated.
+2. Map the application attack surface: pages, routes, forms, APIs, client-side assets (guide me via browser DevTools and reading the app).
+3. Analyze for OWASP Top 10 style issues — injection, broken access control, XSS, security misconfiguration, sensitive data exposure — explained in plain language.
+4. Propose safe, minimal validation steps per hypothesis; wait for my approval; interpret the responses I paste back.
+5. Evidence: for each finding tell me the exact request, response, and screenshot to capture, and label them.
+6. Help me draft the professional report below; I review and finalize.
+
+REQUIRED REPORT STRUCTURE
+Executive Summary / Scope / Methodology / Application Inventory / Findings (per finding: Severity, Evidence, Affected Components, Technical Description, Reproduction, Impact, Remediation, Retest Guidance) / Limitations / Conclusion / Appendix (full request/response evidence).
+
+INTERACTION RULES
+- Beginner mode: one-sentence definitions for every technical term.
+- Refuse any request outside [JUICE_SHOP_URL] and restate the scope.
+- Maintain a running findings list and evidence checklist in chat; remind me to save artifacts locally.
+
+Begin now by restating the scope and asking for my confirmation.</pre></div>
+    </div>
+    <div class="warn"><svg class="ic"><use href="#i-info"/></svg>SCOPE = THE LOCAL JUICE SHOP CONTAINER ONLY. NEVER A DEPLOYED COPY, NEVER A THIRD-PARTY SITE.</div>
+  </div>
+</section>
+<!-- ============ SLIDE 11 — PROFESSIONAL REPORTING ============ -->
+<section class="slide" id="s11" data-section="PROFESSIONAL PRACTICE" aria-label="Slide 11: Professional reporting">
+  <div class="slide-inner">
+    <p class="kicker">THE DELIVERABLE IS THE REPORT</p>
+    <div class="level-head"><span class="lvl-chip">PROFESSIONAL PRACTICE</span><span class="xp-chip">SKILL FOCUS — TURN RAW OUTPUT INTO PROFESSIONAL FINDINGS</span></div>
+    <h2>From Observation to <span class="hi">Finding</span></h2>
+    <p class="lede">"Port 21 is open" is trivia. A <b>finding</b> is trivia transformed into a decision-making tool: evidence, risk, impact, and a fix.</p>
+    <div class="ba">
+      <div class="card"><p class="rawline">“Port 21 is open.”</p>
+        <p style="text-align:center;font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;color:var(--ink-dim)">RAW OBSERVATION — NO VALUE YET</p></div>
+      <div class="ba-arrow">➜</div>
+      <div class="card after ghost" id="afterFinding">
+        <dl>
+          <div class="finding-row"><dt>FINDING</dt><dd>Outdated FTP service (vsftpd 2.3.4) exposed on the authorized lab target.</dd></div>
+          <div class="finding-row"><dt>EVIDENCE</dt><dd>Terminal capture of the service returning its exact version on connection; screenshot labeled EV-01.</dd></div>
+          <div class="finding-row"><dt>RISK</dt><dd>High — this version carries a publicly documented, remotely triggerable weakness.</dd></div>
+          <div class="finding-row"><dt>IMPACT</dt><dd>An attacker could gain unauthorized access to the host and its data.</dd></div>
+          <div class="finding-row"><dt>REPRODUCTION</dt><dd>1) Connect to port 21 on the in-scope lab target. 2) Observe the version in the service banner.</dd></div>
+          <div class="finding-row"><dt>RECOMMENDATION</dt><dd>Upgrade or replace the FTP service; restrict it to required hosts only; retest to confirm.</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div style="text-align:center"><button class="btn btn-primary" id="btnTransform"><svg class="ic"><use href="#i-bolt"/></svg>TRANSFORM THE OBSERVATION</button></div>
+    <div class="takeaway"><b>TAKEAWAY</b><p>Clients don't pay for open ports — they pay for explained risk and a path to fix it. Write for the reader who must act.</p></div>
+  </div>
+</section>
+
+
+
+
+
+
+<!-- ============ SLIDE 12 — CLOSING ============ -->
+<section class="slide" id="s12" data-section="MISSION DEBRIEF" aria-label="Slide 12: Closing">
+  <div class="slide-inner">
+    <div class="term" data-term="outro" style="width:100%">
+      <div class="term-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="term-title">hackdoor@lab: ~/mission — session log</span>
+        <button class="tbtn" data-act="copy"><svg class="ic"><use href="#i-copy"/></svg>COPY</button>
+        <button class="tbtn" data-act="clear">CLEAR</button>
+        <button class="tbtn" data-act="replay"><svg class="ic"><use href="#i-play"/></svg>REPLAY</button>
+      </div>
+      <div class="term-body" style="min-height:170px;font-size:1rem" aria-live="polite"></div>
+      <div class="term-note">THANK YOU FOR TRAINING RESPONSIBLY</div>
+    </div>
+    <div class="outro-brand" style="margin-top:10px">
+      <svg width="72" height="72" viewBox="0 0 24 24" class="ic" style="color:var(--grn);width:64px;height:64px;filter:drop-shadow(0 0 18px rgba(43,255,136,.5))"><use href="#i-logo"/></svg>
+      <h2 style="font-family:var(--mono);letter-spacing:.22em;font-size:clamp(1.6rem,4vw,2.6rem)">HACKDOOR</h2>
+      <p style="color:var(--ink-dim)">Your Doorway to Learning Ethical Hacking</p>
+    </div>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" id="btnRestart"><svg class="ic"><use href="#i-left"/></svg>RESTART WORKSHOP</button>
+      <button class="btn btn-ghost" id="btnWipe"><svg class="ic"><use href="#i-reset"/></svg>RESET ALL PROGRESS</button>
+    </div>
+    <div class="warn" style="justify-content:center"><svg class="ic"><use href="#i-info"/></svg>GO HACK SOMETHING — LEGALLY, IN YOUR OWN LAB, WITH AUTHORIZATION.</div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <button class="navbtn" id="btnPrev" aria-label="Previous slide"><svg class="ic"><use href="#i-left"/></svg>PREV</button>
+  <div class="kbd-hints" aria-hidden="true"><b>←</b> <b>→</b> navigate &nbsp;·&nbsp; <b>Home</b>/<b>End</b> first/last &nbsp;·&nbsp; <b>O</b> overview &nbsp;·&nbsp; <b>F</b> fullscreen &nbsp;·&nbsp; <b>Esc</b> close</div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span id="footCount">01 / 12</span>
+    <button class="navbtn" id="btnNext" aria-label="Next slide">NEXT<svg class="ic"><use href="#i-right"/></svg></button>
+  </div>
+</footer>
+
+<!-- ================= OVERVIEW ================= -->
+<div class="overlay" id="overview" role="dialog" aria-modal="true" aria-label="Slide overview">
+  <div class="ov-card">
+    <div class="ov-head"><h3>// SLIDE OVERVIEW — JUMP ANYWHERE</h3><button class="tbtn" id="ovClose" style="font-size:.72rem">CLOSE [ESC]</button></div>
+    <div class="ov-grid" id="ovGrid"></div>
+  </div>
+</div>
+
+<!-- ================= GENERIC MODAL ================= -->
+<div class="overlay" id="modal-root">
+  <div class="ov-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="ov-head"><h3 id="modalTitle">// NOTICE</h3><button class="tbtn" id="modalClose" style="font-size:.72rem">CLOSE</button></div>
+    <div id="modalBody"></div>
+    <div id="modalFoot"></div>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+
+<!-- ================= TRAINER DRAWER ================= -->
+<aside id="trainer" aria-label="Trainer controls">
+  <div class="t-bar">
+    <svg class="ic" style="color:var(--cyn)"><use href="#i-trainer"/></svg>
+    <b>TRAINER CONSOLE</b>
+    <button class="hbtn" id="tClose" aria-label="Close trainer panel" style="width:32px;height:32px"><svg class="ic"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="t-body">
+    <div class="t-sec" id="pinSec">
+      <h4>ENTER TRAINER PIN</h4>
+      <div class="pin-wrap">
+        <input type="password" id="pinInput" inputmode="numeric" maxlength="4" placeholder="••••" aria-label="Trainer demo PIN">
+        <button class="t-btn" id="btnPin" style="padding:11px">UNLOCK CONSOLE</button>
+        <p class="fb" id="pinMsg"></p>
+      </div>
+      <p class="t-note">Demo PIN: 1337. This is a presentation convenience for smooth facilitation — <b>not</b> a security mechanism. Everything here is stored locally in the browser.</p>
+    </div>
+    <div id="trainerBody" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+      <div class="t-sec"><h4>XP CONTROL</h4>
+        <div class="t-row"><select id="tTeam" aria-label="Trainer team select"></select></div>
+        <div class="t-row">
+          <button class="t-btn" id="tPlus">+100 XP</button>
+          <button class="t-btn red" id="tMinus">−100 XP</button>
+          <button class="t-btn red" id="tResetBoard">RESET SCOREBOARD</button>
+        </div>
+      </div>
+      <div class="t-sec"><h4>HINTS + CHALLENGES</h4>
+        <div class="t-row"><button class="t-btn" id="tHints">FREE-REVEAL ALL HINTS</button></div>
+        <div class="t-row">
+          <select id="tLevelSel" aria-label="Select level">
+            <option value="scan">LEVEL 02 — SCAN</option>
+            <option value="enum">LEVEL 03 — ENUMERATION</option>
+          </select>
+          <button class="t-btn" id="tLevelGo">MARK COMPLETE</button>
+        </div>
+      </div>
+      <div class="t-sec"><h4>BADGES</h4>
+        <div class="t-row">
+          <select id="tBadgeSel" aria-label="Select badge"></select>
+          <button class="t-btn" id="tBadgeGo">UNLOCK</button>
+        </div>
+      </div>
+      <div class="t-sec"><h4>PRESENTATION TOGGLES</h4>
+        <div class="tgl-line">LEADERBOARD RANKING <span class="tgl" id="tglRank" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle leaderboard ranking"></span></div>
+        <div class="tgl-line">SOUND EFFECTS <span class="tgl" id="tglSound" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle sound effects"></span></div>
+        <div class="tgl-line">ANIMATIONS <span class="tgl" id="tglAnim" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle animations"></span></div>
+      </div>
+      <div class="t-sec"><h4>DANGER ZONE</h4>
+        <div class="t-row">
+          <button class="t-btn red" id="tResetAll">RESET ALL PARTICIPANT PROGRESS</button>
+          <button class="t-btn" id="tLock">LOCK CONSOLE</button>
+        </div>
+      </div>
+      <p class="t-note">All controls take effect immediately and persist via localStorage. This console manages the <i>deck</i>, not the lab.</p>
+    </div>
+  </div>
+</aside>
+<script>
+/* ============================================================
+   HACKDOOR — engine + gamification
+   Sections: CONFIG · STATE · UTILS · SOUND · THEME · NAV ·
+   OVERVIEW · MODAL/TOAST · TERMINAL · XP/BADGES/HINTS ·
+   WIDGETS · TRAINER · INIT
+   ============================================================ */
+'use strict';
+/* ---------------- CONFIG (trainer-editable) ---------------- */
+const SCORING = {               // fully configurable scoring table
+  recon:      {label:'Recon',               xp:100},
+  scanning:   {label:'Scanning',            xp:150},
+  enumeration:{label:'Enumeration',         xp:200},
+  validated:  {label:'Validated Finding',   xp:250},
+  flag:       {label:'Flag',                xp:500},
+  report:     {label:'Professional Report', xp:300},
+  ethics:     {label:'Ethics Bonus',        xp:200}
+};
+const WORKSHOP_FLAG = 'HACKDOOR{AUTHORIZED_LAB_SUCCESS}';  // trainers: change per session
+const TRAINER_PIN   = '1337';                               // demo convenience only — NOT a security control
+const STORE_KEY     = 'hackdoor.workshop.v1';
+const THEME_KEY     = 'hackdoor.theme';
+
+const BADGES = [
+  {id:'recon',  icon:'i-radar',  name:'Recon Scout',         desc:'Identified + logged the authorized target'},
+  {id:'port',   icon:'i-plug',   name:'Port Detective',      desc:'Spotted the high-value services in a scan'},
+  {id:'enum',   icon:'i-list',   name:'Enumeration Expert',  desc:'Prioritized an attack surface by evidence'},
+  {id:'exploit',icon:'i-bug',    name:'Exploit Apprentice',  desc:'Ran a disciplined validation protocol'},
+  {id:'flag',   icon:'i-flag',   name:'Flag Hunter',         desc:'Captured the workshop flag'},
+  {id:'report', icon:'i-doc',    name:'Report Architect',    desc:'Passed the report quality gate'},
+  {id:'ethics', icon:'i-scale',  name:'Ethics Guardian',     desc:'Aced every ethics scenario'}
+];
+const MISSION = [
+  {id:'scan', num:'02', name:'SCAN',        short:'Map ports, services and versions',      slide:5},
+  {id:'enum', num:'03', name:'ENUMERATION', short:'Turn scan data into prioritized leads', slide:6}
+];
+const HINTS = {
+  enum:{cost:10, text:'Rank by evidence, not vibes: services whose exact version is famous in training circles (an old FTP daemon, an old Samba) outrank a generic web server or SSH. If you are unsure which is which, ask the trainer.'}
+};
+const PORT_ROWS = [
+  {port:'21/tcp', svc:'ftp  · vsftpd 2.3.4', hot:1, why:'vsftpd 2.3.4 is a textbook version with a famous, documented weakness — a hot lead.'},
+  {port:'22/tcp', svc:'ssh  · OpenSSH 4.7p1', hot:0, why:'Useful later, just old — not the flashiest lead on this VM.'},
+  {port:'80/tcp', svc:'http · Apache 2.2.8', hot:0, why:'Worth enumerating for web apps, but not one of the two headliners.'},
+  {port:'139/tcp',svc:'netbios · Samba 3.0.20', hot:1, why:'Samba 3.0.20 is the second famous lead — specific version, well-documented issue.'},
+  {port:'3306/tcp',svc:'mysql · MySQL 5.0.51a', hot:0, why:'Interesting for data exposure checks, but lower priority than the version-famous pair.'}
+];
+/* ---------------- STATE ---------------- */
+const DEFAULT_STATE = () => ({
+  slide:0, theme:null,
+  teams:[{id:'t1', name:'TEAM ALPHA', xp:0}],
+  activeTeam:'t1',
+  badges:[], levels:{recon:false,scan:false,enum:false,exploit:false,flag:false,report:false},
+  hints:{}, hintsUsed:0, streak:0,
+  evidence:[], ethics:{a:null,b:null,c:null}, ethicsBonus:false,
+  rq:[], quizPort:false, quizEnum:false, quizSev:null, ethicsCheck:false,
+  ddSolved:false, flagAttempts:0, scoreLog:[],
+  settings:{sound:true, anim:true, rank:false}, trainer:false
+});
+let S = DEFAULT_STATE();
+function storageOK(){ try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); return true; }catch(e){ return false; } }
+const CAN_STORE = storageOK();
+function saveState(){ if(!CAN_STORE) return; try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+function loadState(){
+  if(!CAN_STORE) return;
+  try{
+    const raw = localStorage.getItem(STORE_KEY); if(!raw) return;
+    const parsed = JSON.parse(raw);
+    const d = DEFAULT_STATE();
+    S = Object.assign(d, parsed);
+    S.levels = Object.assign(d.levels, parsed.levels||{});
+    S.settings = Object.assign(d.settings, parsed.settings||{});
+    S.ethics = Object.assign(d.ethics, parsed.ethics||{});
+    S.hints = Object.assign(d.hints, parsed.hints||{});
+    if(!Array.isArray(S.teams) || !S.teams.length) S.teams = d.teams;
+    if(!S.teams.some(t=>t.id===S.activeTeam)) S.activeTeam = S.teams[0].id;
+  }catch(e){ S = DEFAULT_STATE(); }
+}
+function resetState(){
+  const keepTheme = S.theme, keepSettings = Object.assign({}, S.settings);
+  S = DEFAULT_STATE(); S.theme = keepTheme; S.settings = keepSettings;
+  saveState(); refreshAll();
+  showToast('WORKSHOP PROGRESS RESET — FRESH MISSION LOADED','warn'); blip('err');
+}
+/* ---------------- UTILS ---------------- */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+let mmOK=true;
+function REDUCED(){ if(!S.settings.anim) return true; if(!mmOK) return false; try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ mmOK=false; return false; } }
+const fmt = n => (n>0?'+':'') + n;
+const activeTeam = () => S.teams.find(t=>t.id===S.activeTeam) || S.teams[0];
+const ic = (id,st) => `<svg class="ic" ${st?`style="${st}"`:''}><use href="#${id}"/></svg>`;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function copyText(txt){
+  try{ await navigator.clipboard.writeText(txt); return true; }
+  catch(e){
+    try{
+      const ta = document.createElement('textarea'); ta.value = txt;
+      ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+      ta.focus(); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }catch(e2){ return false; }
+  }
+}
+/* ---------------- SOUND (tiny WebAudio blips) ---------------- */
+let ACTX = null;
+function blip(kind){
+  if(!S.settings.sound) return;
+  try{
+    ACTX = ACTX || new (window.AudioContext||window.webkitAudioContext)();
+    if(ACTX.state === 'suspended') ACTX.resume();
+    const seq = kind==='badge' ? [[523,0,.09],[659,.09,.09],[880,.18,.14]]
+              : kind==='err'   ? [[200,0,.16]] : kind==='xp' ? [[760,0,.07],[1040,.07,.08]]
+              : [[440,0,.07]];
+    seq.forEach(([f,d,dur])=>{
+      const o = ACTX.createOscillator(), g = ACTX.createGain();
+      o.type='square'; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001, ACTX.currentTime+d);
+      g.gain.exponentialRampToValueAtTime(.05, ACTX.currentTime+d+.01);
+      g.gain.exponentialRampToValueAtTime(.0001, ACTX.currentTime+d+dur);
+      o.connect(g).connect(ACTX.destination); o.start(ACTX.currentTime+d); o.stop(ACTX.currentTime+d+dur+.02);
+    });
+  }catch(e){}
+}
+/* ---------------- TOAST ---------------- */
+function showToast(msg, type='ok', ms=2800){
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, ms);
+}
+/* ---------------- MODAL ---------------- */
+let modalCleanup = null;
+function openModal(title, bodyHTML, footButtons){
+  $('#modalTitle').textContent = '// ' + title;
+  $('#modalBody').innerHTML = bodyHTML;
+  const foot = $('#modalFoot'); foot.innerHTML = '';
+  (footButtons||[]).forEach(b=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn ' + (b.primary?'btn-primary':'btn-ghost'); btn.style.padding='10px 20px';
+    btn.textContent = b.label; btn.addEventListener('click', ()=>b.fn && b.fn()); foot.appendChild(btn);
+  });
+  $('#modal-root').classList.add('open');
+  const first = foot.querySelector('button'); if(first) first.focus();
+}
+function closeModal(){ $('#modal-root').classList.remove('open'); if(modalCleanup){ modalCleanup(); modalCleanup=null; } }
+function confirmModal(title, msg, onYes){
+  openModal(title, `<p>${msg}</p>`, [
+    {label:'CANCEL', fn:closeModal},
+    {label:'CONFIRM', primary:true, fn:()=>{ closeModal(); onYes(); }}
+  ]);
+}
+/* ---------------- THEME ---------------- */
+function applyTheme(){
+  const th = S.theme || 'dark';
+  document.documentElement.setAttribute('data-theme', th);
+  $('#themeIcon').firstElementChild.setAttribute('href', th==='dark' ? '#i-sun' : '#i-moon');
+}
+function toggleTheme(){
+  S.theme = (S.theme==='light') ? 'dark' : 'light';
+  applyTheme(); saveState();
+  if(CAN_STORE){ try{ localStorage.setItem(THEME_KEY, S.theme); }catch(e){} }
+  showToast((S.theme==='light'?'LIGHT':'DARK') + ' MODE ENGAGED','ok',1600);
+}
+/* ---------------- NAV ENGINE ---------------- */
+const slides = $$('.slide');
+let cur = 0;
+function goToSlide(i, announce=true){
+  i = Math.max(0, Math.min(slides.length-1, i));
+  slides[cur].classList.remove('active');
+  slides[cur].setAttribute('aria-hidden','true');
+  cur = i;
+  slides[cur].classList.add('active');
+  slides[cur].removeAttribute('aria-hidden');
+  $('#secLabel').textContent = slides[cur].dataset.section || '';
+  const n = String(cur+1).padStart(2,'0');
+  $('#slideCount').textContent = `SLIDE ${n} / ${slides.length}`;
+  $('#footCount').textContent = `${n} / ${slides.length}`;
+  $('#btnPrev').disabled = cur===0;
+  $('#btnNext').disabled = cur===slides.length-1;
+  if(announce && CAN_STORE){ S.slide = cur; saveState(); }
+  slides[cur].scrollTop = 0;
+  onEnterSlide(cur);
+  $$('.ov-cell').forEach(c=>c.classList.toggle('cur', +c.dataset.i===cur));
+  $$('#mDots .mdot').forEach((d,di)=>d.classList.toggle('cur', MISSION[di] && MISSION[di].slide===cur));
+}
+const nextSlide     = () => { goToSlide(cur+1); blip('tick'); };
+const previousSlide = () => { goToSlide(cur-1); blip('tick'); };
+function updateProgress(){ $('#progBar').style.width = (cur/(slides.length-1)*100) + '%'; }
+function onEnterSlide(i){
+  const term = slides[i].querySelector('.term[data-term]');
+  if(term && term._term && term._term.autoplay && !term._term.playedOnce) term._term.play();
+  updateProgress();
+}
+function toggleFullscreen(){
+  try{
+    if(document.fullscreenElement){ if(document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
+    else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(()=> showToast('Fullscreen not permitted here','warn')); }
+    else showToast('Fullscreen not available in this browser','warn');
+  }catch(e){ showToast('Fullscreen not available','warn'); }
+}
+/* ---------------- OVERVIEW ---------------- */
+function buildOverview(){
+  const g = $('#ovGrid'); g.innerHTML = '';
+  slides.forEach((s,i)=>{
+    const h2 = s.querySelector('h2, h1');
+    const btn = document.createElement('button');
+    btn.className = 'ov-cell' + (i===cur?' cur':''); btn.dataset.i = i;
+    btn.innerHTML = `<span class="n">${String(i+1).padStart(2,'0')} // ${esc(s.dataset.section||'')}</span><span class="t">${esc(h2 ? h2.textContent.trim() : 'Slide')}</span>`;
+    btn.addEventListener('click', ()=>{ closeOverview(); goToSlide(i); });
+    g.appendChild(btn);
+  });
+}
+function openOverview(){ buildOverview(); $('#overview').classList.add('open'); }
+function closeOverview(){ $('#overview').classList.remove('open'); }
+</script>
+<script>
+/* ---------------- TERMINAL COMPONENT ---------------- */
+const TERM_SCRIPTS = {
+  hero:{autoplay:true, lines:[
+    {c:'./boot_mission.sh --whoami'},
+    {o:'[ OK ] HACKDOOR training deck v1.0 — initialized', k:'ln-ok'},
+    {o:'[ OK ] scope loaded · AUTHORIZED LOCAL LAB ONLY', k:'ln-warn'},
+    {o:'[ OK ] operator profile: JUNIOR SECURITY ANALYST'},
+    {o:'[ .. ] mounting levels 01→06 ..... done'},
+    {o:'', k:'ln-dim'},
+    {o:'welcome, analyst. press START MISSION to begin.', k:'ln-cy'}
+  ]},
+  nmap:{autoplay:true, lines:[
+    {c:'nmap -sV [TARGET_IP]'},
+    {o:'Starting Nmap — AUTHORIZED LAB TARGET ONLY', k:'ln-dim'},
+    {o:'Nmap scan report for [TARGET_IP]', k:'ln-cy'},
+    {o:'PORT     STATE SERVICE        VERSION'},
+    {o:'21/tcp   open  ftp            vsftpd 2.3.4', k:'ln-ok'},
+    {o:'22/tcp   open  ssh            OpenSSH 4.7p1'},
+    {o:'80/tcp   open  http           Apache httpd 2.2.8'},
+    {o:'139/tcp  open  netbios-ssn    Samba smbd 3.0.20', k:'ln-ok'},
+    {o:'3306/tcp open  mysql          MySQL 5.0.51a', k:'ln-warn'},
+    {o:'', k:'ln-dim'},
+    {o:'5 services inventoried. which two are famous leads?', k:'ln-cy'}
+  ]},
+  val:{autoplay:false, lines:[
+    {c:'./validate --target [TARGET_IP] --mode safest --log'},
+    {o:'[SIM] checking authorization token ....... OK (lab)', k:'ln-ok'},
+    {o:'[SIM] probing service response .......... version signature confirmed', k:'ln-ok'},
+    {o:'[SIM] confidence: HIGH · disruption: NONE', k:'ln-cy'},
+    {o:'[SIM] evidence written → EV-03_validation.log', k:'ln-ok'},
+    {o:'[ OK ] VALIDATED FINDING — hypothesis confirmed, target intact', k:'ln-ok'},
+    {o:'*** SIMULATION ONLY — no real exploit executed ***', k:'ln-red'}
+  ]},
+  outro:{autoplay:true, lines:[
+    {o:'> SESSION COMPLETE', k:'ln-ok'},
+    {o:'> SKILLS ACQUIRED: ██████████ 100%', k:'ln-cy'},
+    {o:'> ETHICS CHECK: PASSED', k:'ln-ok'},
+    {o:'> NEXT MISSION: REAL-WORLD SECURITY — WITH AUTHORIZATION', k:'ln-warn'}
+  ], loop:false}
+};
+const sleep = ms => new Promise(r=>setTimeout(r, ms));
+class Term {
+  constructor(el, key){
+    this.el = el; this.key = key; this.body = el.querySelector('.term-body');
+    this.spec = TERM_SCRIPTS[key] || {lines:[]};
+    this.autoplay = !!this.spec.autoplay; this.playedOnce=false; this.playing=false;
+    el._term = this;
+    el.querySelector('[data-act="copy"]').addEventListener('click', async ()=>{
+      const ok = await copyText(this.plain());
+      showToast(ok?'TERMINAL COPIED TO CLIPBOARD':'COPY BLOCKED BY BROWSER — select text manually', ok?'ok':'warn'); if(ok) blip('xp');
+    });
+    el.querySelector('[data-act="clear"]').addEventListener('click', ()=>{ this.body.innerHTML=''; this.playedOnce=false; });
+    const rp = el.querySelector('[data-act="replay"]');
+    if(rp) rp.addEventListener('click', ()=>{ this.body.innerHTML=''; this.playedOnce=false; this.play(); });
+  }
+  plain(){
+    return this.spec.lines.map(l => l.c ? '$ '+l.c : l.o).join('\n');
+  }
+  async play(){
+    if(this.playing) return; this.playing = true;
+    const instant = REDUCED();
+    for(const line of this.spec.lines){
+      if(line.c !== undefined){
+        const p = document.createElement('div'); p.className='ln-cmd';
+        p.innerHTML = '<span class="prompt">analyst@lab:~$ </span>';
+        const span = document.createElement('span'); p.appendChild(span);
+        const curEl = document.createElement('span'); curEl.className='cursor'; curEl.textContent='█'; p.appendChild(curEl);
+        this.body.appendChild(p);
+        if(instant){ span.textContent = line.c; }
+        else{
+          for(const ch of line.c){ span.textContent += ch; this.scroll(); await sleep(26); }
+        }
+        curEl.remove(); this.scroll();
+        if(!instant) await sleep(260);
+      }else{
+        const p = document.createElement('div');
+        p.className = 'ln-out ' + (line.k||''); p.textContent = line.o;
+        this.body.appendChild(p); this.scroll();
+        if(!instant) await sleep(line.o===''?60:330);
+      }
+    }
+    const end = document.createElement('div');
+    end.innerHTML = '<span class="prompt">analyst@lab:~$ </span><span class="cursor">█</span>';
+    this.body.appendChild(end); this.scroll();
+    this.playing = false; this.playedOnce = true;
+  }
+  scroll(){ this.body.scrollTop = this.body.scrollHeight; }
+}
+function initTerminals(){
+  $$('.term[data-term]').forEach(el=> new Term(el, el.dataset.term));
+}
+/* ---------------- XP / STREAK / HUD ---------------- */
+function totalXP(){ return S.teams.reduce((a,t)=>a+t.xp,0); }
+function addXP(amount, reason, teamId){
+  const t = S.teams.find(x=>x.id===(teamId||S.activeTeam)) || S.teams[0];
+  if(!t) return;
+  t.xp = Math.max(0, t.xp + amount);
+  if(amount>0){ S.scoreLog.unshift(`${fmt(amount)} XP → ${t.name} · ${reason}`); S.scoreLog = S.scoreLog.slice(0,6); }
+  showToast(`${fmt(amount)} XP — ${t.name} · ${reason}`, amount>=0?'ok':'warn');
+  blip(amount>0?'xp':'err');
+  refreshScore(); saveState();
+}
+function bumpStreak(){ S.streak++; refreshScore(); saveState(); }
+function breakStreak(){ if(S.streak>0) showToast('STREAK RESET — hints are tools, not cheats','warn',2200); S.streak=0; refreshScore(); saveState(); }
+function refreshScore(){
+  $('#hudXP').lastElementChild.textContent = totalXP() + ' XP';
+  $('#hudStreak').lastElementChild.textContent = 'STREAK ×' + S.streak;
+  $('#hudBadges').lastElementChild.textContent = S.badges.length + '/' + BADGES.length;
+  renderScoreboard(); renderMissionDots(); renderFinalStats(); refreshLevelChips();
+}
+/* ---------------- BADGES ---------------- */
+function unlockBadge(id){
+  if(S.badges.includes(id)) return;
+  S.badges.push(id); saveState(); refreshScore();
+  const b = BADGES.find(x=>x.id===id); if(!b) return;
+  blip('badge');
+  openModal('ACHIEVEMENT UNLOCKED',
+    `<div class="achv-pop"><div class="a-ic">${ic(b.icon,'width:40px;height:40px')}</div>
+     <span class="a-k">ACHIEVEMENT UNLOCKED</span><b>${b.name}</b><p>${b.desc}</p></div>`,
+    [{label:'NICE', primary:true, fn:closeModal}]);
+  setTimeout(()=>{ if($('#modal-root').classList.contains('open')) closeModal(); }, 3600);
+}
+function showBadges(){
+  openModal('BADGE VAULT', `<div class="badge-grid">` + BADGES.map(b=>
+    `<div class="card bdg ${S.badges.includes(b.id)?'owned':''}">
+       <span class="b-ic">${ic(b.icon,'width:24px;height:24px')}</span>
+       <b>${b.name}</b><small>${b.desc}</small>
+       <span class="tag ${S.badges.includes(b.id)?'g':''}">${S.badges.includes(b.id)?'EARNED':'LOCKED'}</span>
+     </div>`).join('') + `</div>`, [{label:'CLOSE', primary:true, fn:closeModal}]);
+}
+/* ---------------- HINTS ---------------- */
+function showHint(id){
+  const h = HINTS[id]; if(!h) return;
+  if(S.hints[id]){ openModal('HINT — ALREADY REVEALED', `<p class="mono" style="font-size:.84rem;line-height:1.8">${esc(h.text)}</p>`, [{label:'GOT IT', primary:true, fn:closeModal}]); return; }
+  const team = activeTeam();
+  openModal(`HINT — COSTS ${h.cost} XP`,
+    `<p>Reveal this hint for <b>${team.name}</b> at a cost of <b style="color:var(--amb)">−${h.cost} XP</b>? Your streak resets. Trainers can reveal for free in the trainer panel.</p>`,
+    [ {label:'CANCEL', fn:closeModal},
+      {label:'SPEND '+h.cost+' XP', primary:true, fn:()=>{ closeModal(); revealHint(id, false); }} ]);
+}
+function revealHint(id, free){
+  const h = HINTS[id]; if(!h || S.hints[id]) { return; }
+  S.hints[id] = true;
+  if(!free){ addXP(-h.cost, 'hint purchased'); S.hintsUsed++; breakStreak(); }
+  saveState(); renderLadder();
+  openModal('HINT REVEALED' + (free?' — TRAINER OVERRIDE':''), `<p class="mono" style="font-size:.84rem;line-height:1.8">${esc(h.text)}</p>`, [{label:'BACK TO WORK', primary:true, fn:closeModal}]);
+  if(!free) blip('err'); 
+}
+function renderLadder(){
+  [1,2,3,4].forEach(n=>{
+    const id='h'+n, step = $(`.hint-step[data-h="${n}"]`);
+    if(!step) return;
+    const known = S.hints[id];
+    step.classList.toggle('locked', !known);
+    $('#hint'+n+'Body').textContent = known ? HINTS[id].text : '███████████████████████████████████████████████';
+    const btn = step.querySelector('.btn-hint');
+    btn.disabled = false;
+    btn.textContent = known ? 'VIEW (FREE)' : ('REVEAL −' + HINTS[id].cost);
+  });
+  const th = $('#trainerHintState');
+  if(th) th.textContent = S.trainer ? 'TRAINER: UNLOCKED — FREE REVEALS ON' : 'TRAINER: LOCKED';
+}
+/* ---------------- MISSION ENGINE ---------------- */
+function levelDone(id){ return id==='report' ? S.levels.report : !!S.levels[id]; }
+function doneCount(){ return MISSION.filter(m=>levelDone(m.id)).length; }
+function renderMissionDots(){
+  const w = $('#mDots'); if(!w) return;
+  if(!w.children.length){
+    MISSION.forEach(m=>{
+      const d=document.createElement('span'); d.className='mdot';
+      d.innerHTML=`<span class="tip">LEVEL ${m.num} ${m.name}</span>`; w.appendChild(d);
+    });
+  }
+  $$('#mDots .mdot').forEach((d,i)=> d.classList.toggle('done', levelDone(MISSION[i].id)));
+  const pct = Math.round(doneCount()/MISSION.length*100);
+  const f=$('#missionFill'); if(f) f.style.width = pct+'%';
+  const t=$('#missionPct'); if(t) t.textContent = pct+'%';
+}
+function markLevelComplete(id, silent){
+  if(S.levels[id]) return;
+  S.levels[id] = true; saveState(); refreshScore();
+  if(!silent){ showToast(`LEVEL COMPLETE — ${MISSION.find(m=>m.id===id)?.name||id.toUpperCase()}`,'ok'); bumpStreak(); checkMissionDone(); }
+}
+function checkMissionDone(){
+  if(doneCount()===MISSION.length){
+    setTimeout(()=> openModal('MISSION COMPLETE',
+      `<div class="achv-pop"><div class="a-ic">${ic('i-flag','width:40px;height:40px')}</div>
+       <span class="a-k">ALL PRACTICE LEVELS CLEARED</span><b>MISSION COMPLETE</b>
+       <p>Scan → enumerate → prioritize by evidence. Carry that discipline into your Docker lab.</p></div>`,
+      [{label:'DEBRIEF ME', primary:true, fn:()=>{ closeModal(); goToSlide(slides.length-1); }}]), 900);
+  }
+}
+function refreshLevelChips(){
+  $$('.slide[data-level]').forEach(s=>{
+    const lv = s.dataset.level;
+    s.classList.toggle('level-complete', lv==='report2' ? S.levels.report : !!S.levels[lv]);
+  });
+}
+</script>
+<script>
+/* ---------------- SCORE STATE / TEAM SELECTS ---------------- */
+function maxRefXP(){ return Object.values(SCORING).reduce((a,v)=>a+v.xp,0); }
+function renderScoreboard(){
+  const rows = $('#teamRows'); if(!rows) return;
+  const order = S.settings.rank ? [...S.teams].sort((a,b)=>b.xp-a.xp) : S.teams;
+  rows.innerHTML = order.map((t,i)=>{
+    const pct = Math.min(100, Math.round(t.xp/maxRefXP()*100));
+    const rank = S.settings.rank ? ['①','②','③','④','⑤','⑥'][i]||'•' : '#';
+    return `<div class="card card-in sb-row" data-tid="${t.id}">
+      <span class="sb-rank">${rank}</span>
+      <span class="sb-name">${esc(t.name)}${t.id===S.activeTeam?' <span class="tag g" style="margin-left:6px">ACTIVE</span>':''}</span>
+      <span class="sb-xp">${t.xp} XP</span>
+      <div class="sb-bar"><span style="width:${pct}%"></span></div>
+      <button class="sb-del" aria-label="Remove ${esc(t.name)}" title="Remove team">✕</button>
+    </div>`;}).join('');
+  $$('#teamRows .sb-del').forEach(b=> b.addEventListener('click', e=>{
+    const tid = e.target.closest('.sb-row').dataset.tid;
+    if(S.teams.length<=1){ showToast('At least one team must remain','warn'); return; }
+    S.teams = S.teams.filter(t=>t.id!==tid);
+    if(S.activeTeam===tid) S.activeTeam = S.teams[0].id;
+    saveState(); refreshScore(); fillTeamSelects();
+  }));
+  $$('#teamRows .sb-name').forEach(n=> n.addEventListener('click', e=>{
+    const tid = e.target.closest('.sb-row').dataset.tid;
+    S.activeTeam = tid; saveState(); refreshScore();
+    showToast('ACTIVE TEAM → ' + activeTeam().name, 'ok', 1600);
+  }));
+  const log = $('#scoreLog'); if(log) log.innerHTML = S.scoreLog.map(l=>`<div>▸ ${esc(l)}</div>`).join('') || '<div>▸ no score events yet — play the levels</div>';
+  $('#rankNote').textContent = 'LEADERBOARD RANKING: ' + (S.settings.rank ? 'ON — sorted by XP (trainer-enabled)' : 'OFF — trainer can enable it in the trainer panel. Teams are never ranked automatically.');
+}
+function fillTeamSelects(){
+  const opts = S.teams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  ['#selTeam','#tTeam'].forEach(s=>{ const el=$(s); if(el){ el.innerHTML=opts; el.value=S.activeTeam; } });
+  const ev = $('#selEvent');
+  if(ev) ev.innerHTML = Object.entries(SCORING).map(([k,v])=>`<option value="${k}">${v.label} (+${v.xp} XP)</option>`).join('');
+}
+/* ---------------- RULES OF ENGAGEMENT — ETHICS CHECK (SLIDE 02) ---------------- */
+function initEthicsCheck(){
+  const tgls = $$('#s2 .tgl');
+  const apply = ()=>{
+    const on = tgls.every(t=>t.getAttribute('aria-checked')==='true');
+    $('#ethicsStamp').classList.toggle('on', on);
+    if(on && !S.ethicsCheck){ S.ethicsCheck=true; saveState(); showToast('ETHICS CHECK PASSED — LAB ACCESS GRANTED','ok'); blip('badge'); }
+  };
+  tgls.forEach(t=>{
+    const flip = ()=>{ t.setAttribute('aria-checked', t.getAttribute('aria-checked')!=='true'); apply(); };
+    t.parentElement.addEventListener('click', flip);
+    t.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); flip(); }});
+  });
+  if(S.ethicsCheck){ tgls.forEach(t=>t.setAttribute('aria-checked','true')); $('#ethicsStamp').classList.add('on'); }
+}
+/* ---------------- SCANNING — PORT QUIZ (SLIDE 06) ---------------- */
+function buildPicker(el, multi){
+  el.innerHTML = PORT_ROWS.map((r,i)=>
+    `<button class="prow" data-i="${i}" aria-pressed="false">
+       <span class="pn">${r.port}</span><span class="sv">${r.svc}</span><span class="st">—</span>
+     </button>`).join('');
+  el.querySelectorAll('.prow').forEach(b=> b.addEventListener('click', ()=>{
+    if(b.disabled) return;
+    b.classList.toggle('sel');
+    b.setAttribute('aria-pressed', b.classList.contains('sel'));
+  }));
+}
+function initPortQuiz(){
+  buildPicker($('#portQuiz'), true);
+  if(S.quizPort){ markPickerDone($('#portQuiz'), [0,3]); $('#portFb').textContent='✓ Solved earlier — vsftpd 2.3.4 + Samba 3.0.20 are the famous leads.'; $('#portFb').className='fb ok'; lockPicker($('#portQuiz')); }
+  $('#btnPortSubmit').addEventListener('click', ()=>{
+    if(S.quizPort) return;
+    const sel = $$('#portQuiz .prow.sel').map(b=>+b.dataset.i).sort().join(',');
+    const fb = $('#portFb');
+    if(sel === '0,3'){
+      fb.textContent='✓ CORRECT — port 21 (vsftpd 2.3.4) and port 139 (Samba 3.0.20): specific versions with famous, documented weaknesses.';
+      fb.className='fb ok'; markPickerDone($('#portQuiz'),[0,3]); lockPicker($('#portQuiz'));
+      S.quizPort=true; markLevelComplete('scan'); addXP(SCORING.scanning.xp,'Scanning — ports interpreted'); unlockBadge('port'); saveState();
+    }else{
+      fb.textContent=' Not quite. Look for the two services whose exact versions are famous in training circles — one FTP, one file-sharing.';
+      fb.className='fb err'; blip('err');
+    }
+  });
+}
+function markPickerDone(el, hits){
+  el.querySelectorAll('.prow').forEach(b=>{
+    const hot = [0,3].includes(+b.dataset.i);
+    b.classList.remove('sel'); if(hot){ b.classList.add('hit'); } else { b.classList.remove('hit'); }
+    b.querySelector('.st').textContent = hot ? 'HOT LEAD' : 'note';
+  });
+}
+function lockPicker(el){ el.querySelectorAll('.prow').forEach(b=> b.disabled=true); }
+/* ---------------- ENUMERATION — PRIORITY PICKER (SLIDE 07) ---------------- */
+function initEnumQuiz(){
+  buildPicker($('#enumQuiz'), true);
+  if(S.quizEnum){ markPickerDone($('#enumQuiz'),[0,3,2]); $('#enumFb').textContent='✓ Prioritized earlier — version-famous services first.'; $('#enumFb').className='fb ok'; lockPicker($('#enumQuiz')); }
+  $('#btnEnumSubmit').addEventListener('click', ()=>{
+    if(S.quizEnum) return;
+    const sel = $$('#enumQuiz .prow.sel').map(b=>+b.dataset.i);
+    const fb = $('#enumFb');
+    if(sel.length!==3){ fb.textContent='// select exactly 3 services'; fb.className='fb warn'; return; }
+    if(sel.includes(0) && sel.includes(3)){
+      fb.textContent='✓ GOOD TRIAGE — both version-famous leads (21, 139) made your top 3. HTTP (80) is the standard third: biggest surface.';
+      fb.className='fb ok'; markPickerDone($('#enumQuiz'),[0,3]); lockPicker($('#enumQuiz'));
+      S.quizEnum=true; markLevelComplete('enum'); addXP(SCORING.enumeration.xp,'Enumeration — attack surface prioritized'); unlockBadge('enum'); saveState();
+    }else{
+      fb.textContent=' Revisit: your top-3 should include both services whose exact versions are famous on this VM (see Level 02).';
+      fb.className='fb err'; blip('err');
+    }
+  });
+}
+/* ---------------- HINT ENGINE (shared) ---------------- */
+function initLadder(){
+  $$('.btn-hint').forEach(b=> b.addEventListener('click', ()=>{
+    const id = 'h' + b.dataset.h;
+    if(S.hints[id]){ showHint(id); return; }
+    if(S.trainer){ openModal('HINT REVEAL', `<p>Trainer mode is <b>UNLOCKED</b>.</p>`, [
+      {label:'SPEND XP', fn:()=>{ closeModal(); showHint(id); }},
+      {label:'FREE REVEAL (TRAINER)', primary:true, fn:()=>{ closeModal(); revealHint(id, true); }} ]); }
+    else showHint(id);
+  }));
+  renderLadder();
+}
+/* ---------------- BEFORE/AFTER TRANSFORM (SLIDE 11) ---------------- */
+function initTransform(){
+  const btn = $('#btnTransform'), after = $('#afterFinding');
+  btn.addEventListener('click', ()=>{
+    const hidden = after.classList.toggle('ghost');
+    btn.innerHTML = (hidden? ic('i-bolt') : ic('i-x')) + (hidden? 'TRANSFORM THE OBSERVATION':'COLLAPSE FINDING');
+  });
+}
+/* ---------------- FINAL STATS RENDER (safe no-op when stats slide absent) ---------------- */
+function renderFinalStats(){
+  if(!$('#statXP')) return;
+  $('#statXP').textContent = totalXP();
+  $('#statFlags').textContent = (S.levels.flag?1:0) + '/1';
+  $('#statChal').textContent = doneCount() + '/6';
+  $('#statHints').textContent = S.hintsUsed;
+  $('#statRQ').textContent = Math.round(S.rq.length/10*100) + '%';
+  $('#statEthics').textContent = S.ethicsBonus ? '+200 ✓' : '—';
+  const w = $('#missionDoneWrap');
+  w.innerHTML = doneCount()===6 ? '<div class="bigdone">MISSION COMPLETE</div>' : '';
+  const order = S.settings.rank ? [...S.teams].sort((a,b)=>b.xp-a.xp) : S.teams;
+  $('#finalTeams').innerHTML = order.map((t,i)=>
+    `<div class="card card-in sb-row" style="grid-template-columns:34px 1fr 90px 40%">
+      <span class="sb-rank">${S.settings.rank?i+1:'#'}</span><span class="sb-name">${esc(t.name)}</span>
+      <span class="sb-xp">${t.xp} XP</span>
+      <div class="sb-bar"><span style="width:${Math.min(100,Math.round(t.xp/maxRefXP()*100))}%"></span></div>
+      <span></span>
+    </div>`).join('');
+}
+/* ---------------- PROMPT BLOCKS ---------------- */
+const PROMPT_ORIG = {};
+function initPromptBlocks(){
+  $$('.prompt-block').forEach(pb=>{
+    const key = pb.dataset.prompt, pre = pb.querySelector('pre');
+    PROMPT_ORIG[key] = pre.textContent;
+    pb.querySelector('.pb-copy').addEventListener('click', async ()=>{
+      const ok = await copyText(pre.textContent);
+      showToast(ok ? 'PROMPT '+key+' COPIED — paste into your AI assistant, then replace [PLACEHOLDERS]' : 'COPY BLOCKED — select the text manually', ok?'ok':'warn', 3200);
+      if(ok) blip('xp');
+    });
+    pb.querySelector('.pb-reset').addEventListener('click', ()=>{ pre.textContent = PROMPT_ORIG[key]; showToast('PROMPT '+key+' RESTORED TO ORIGINAL','ok',1800); });
+    pb.querySelector('.pb-expand').addEventListener('click', ()=> pb.classList.toggle('xpand'));
+  });
+}
+</script>
+<script>
+/* ---------------- TRAINER PANEL ---------------- */
+function initTrainer(){
+  $('#btnTrainer').addEventListener('click', ()=>{ $('#trainer').classList.add('open'); syncTrainer(); });
+  $('#tClose').addEventListener('click', ()=> $('#trainer').classList.remove('open'));
+  $('#btnPin').addEventListener('click', tryPin);
+  $('#pinInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tryPin(); });
+  function tryPin(){
+    if($('#pinInput').value === TRAINER_PIN){
+      S.trainer = true; saveState(); syncTrainer(); renderLadder();
+      $('#pinMsg').textContent=''; showToast('TRAINER CONSOLE UNLOCKED','ok'); blip('badge');
+    }else{ $('#pinMsg').textContent='// wrong PIN'; $('#pinMsg').className='fb err'; blip('err'); }
+    $('#pinInput').value='';
+  }
+  $('#tLock').addEventListener('click', ()=>{ S.trainer=false; saveState(); syncTrainer(); renderLadder(); showToast('TRAINER CONSOLE LOCKED','warn'); });
+  $('#tPlus').addEventListener('click', ()=> addXP(100,'trainer bonus', $('#tTeam').value));
+  $('#tMinus').addEventListener('click', ()=> addXP(-100,'trainer adjustment', $('#tTeam').value));
+  $('#tResetBoard').addEventListener('click', ()=> confirmModal('RESET SCOREBOARD','Zero all team XP and the score log? Badges and level progress are kept.', ()=>{
+    S.teams.forEach(t=>t.xp=0); S.scoreLog=[]; saveState(); refreshScore(); showToast('SCOREBOARD ZEROED','warn');
+  }));
+  $('#tHints').addEventListener('click', ()=>{ ['enum'].forEach(h=>{ S.hints[h]=true; }); S.hintsUsed+=0; saveState(); renderLadder(); showToast('ALL HINTS REVEALED (FREE — TRAINER)','ok'); });
+  $('#tLevelGo').addEventListener('click', ()=>{
+    const lv = $('#tLevelSel').value;
+    markLevelComplete(lv);
+    if(lv==='flag'){ unlockBadge('flag'); }
+    showToast('MARKED COMPLETE: ' + lv.toUpperCase(),'ok');
+  });
+  const bs = $('#tBadgeSel'); bs.innerHTML = BADGES.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+  $('#tBadgeGo').addEventListener('click', ()=> unlockBadge(bs.value));
+  $('#tResetAll').addEventListener('click', ()=> confirmModal('RESET EVERYTHING','This wipes ALL participant progress: XP, badges, levels, hints, evidence. Continue?', resetState));
+  const bindTgl = (id, key, fn)=>{
+    const el = $(id);
+    const set = v => { el.setAttribute('aria-checked', String(v)); };
+    el.addEventListener('click', ()=>{ S.settings[key]=!S.settings[key]; set(S.settings[key]); saveState(); if(fn) fn(); });
+    el.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); el.click(); }});
+    set(S.settings[key]);
+  };
+  bindTgl('#tglRank','rank', ()=>{ refreshScore(); showToast('LEADERBOARD RANKING: '+(S.settings.rank?'ON':'OFF'),'ok',1800); });
+  bindTgl('#tglSound','sound', ()=> showToast('SOUND: '+(S.settings.sound?'ON':'OFF'),'ok',1500));
+  bindTgl('#tglAnim','anim', ()=>{ document.body.classList.toggle('no-anim', !S.settings.anim); showToast('ANIMATIONS: '+(S.settings.anim?'ON':'OFF'),'ok',1500); });
+}
+function syncTrainer(){
+  $('#pinSec').classList.toggle('hidden', S.trainer);
+  $('#trainerBody').classList.toggle('hidden', !S.trainer);
+  fillTeamSelects();
+}
+/* ---------------- GLOBAL BINDINGS + KEYBOARD ---------------- */
+function bindGlobal(){
+  $('#btnNext').addEventListener('click', nextSlide);
+  $('#btnPrev').addEventListener('click', previousSlide);
+  $('#btnTheme').addEventListener('click', toggleTheme);
+  $('#btnOverview').addEventListener('click', openOverview);
+  $('#ovClose').addEventListener('click', closeOverview);
+  $('#overview').addEventListener('click', e=>{ if(e.target.id==='overview') closeOverview(); });
+  $('#modal-root').addEventListener('click', e=>{ if(e.target.id==='modal-root') closeModal(); });
+  $('#modalClose').addEventListener('click', closeModal);
+  $('#btnFull').addEventListener('click', toggleFullscreen);
+  $('#hudBadges').addEventListener('click', showBadges);
+  $('#btnReset').addEventListener('click', ()=> confirmModal('RESET PROGRESS','Wipe all workshop progress (XP, badges, levels, hints)? Theme and settings are kept.', resetState));
+  $('#btnStart').addEventListener('click', ()=>{ $('#heroStatus').textContent='■ ACTIVE — MISSION RUNNING'; goToSlide(1); });
+  $('#btnEnterLab').addEventListener('click', ()=> openOverview());
+  $('#btnRestart').addEventListener('click', ()=> goToSlide(0));
+  $('#btnWipe').addEventListener('click', ()=> confirmModal('RESET EVERYTHING','Return to slide 1 with a fresh workshop state?', ()=>{ resetState(); goToSlide(0); }));
+  $$('.hint-btn').forEach(b=> b.addEventListener('click', ()=> showHint(b.dataset.hint)));
+  $$('.mdot').forEach((d,i)=> d.addEventListener('click', ()=> goToSlide(MISSION[i].slide)));
+  document.addEventListener('keydown', e=>{
+    const tag = (e.target.tagName||'').toUpperCase();
+    const typing = tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||e.target.isContentEditable;
+    if(e.key==='Escape'){
+      if($('#modal-root').classList.contains('open')){ closeModal(); return; }
+      if($('#overview').classList.contains('open')){ closeOverview(); return; }
+      if($('#trainer').classList.contains('open')){ $('#trainer').classList.remove('open'); return; }
+      return;
+    }
+    if(typing) return;
+    switch(e.key){
+      case 'ArrowRight': case 'PageDown': e.preventDefault(); nextSlide(); break;
+      case 'ArrowLeft':  case 'PageUp':   e.preventDefault(); previousSlide(); break;
+      case 'Home': e.preventDefault(); goToSlide(0); break;
+      case 'End':  e.preventDefault(); goToSlide(slides.length-1); break;
+      case 'o': case 'O': $('#overview').classList.contains('open')?closeOverview():openOverview(); break;
+      case 'f': case 'F': toggleFullscreen(); break;
+    }
+  });
+  document.addEventListener('fullscreenchange', ()=>{});
+}
+/* ---------------- REFRESH + INIT ---------------- */
+function refreshAll(){
+  fillTeamSelects(); refreshScore(); renderLadder();
+  // ethics stamp (slide 2)
+  if(S.ethicsCheck){ $$('#s2 .tgl').forEach(t=>t.setAttribute('aria-checked','true')); $('#ethicsStamp').classList.add('on'); }
+  else { $$('#s2 .tgl').forEach(t=>t.setAttribute('aria-checked','false')); $('#ethicsStamp').classList.remove('on'); }
+  // pickers
+  if($('#portQuiz')){
+    if(S.quizPort){ markPickerDone($('#portQuiz')); lockPicker($('#portQuiz')); $('#portFb').textContent='✓ Solved — vsftpd 2.3.4 + Samba 3.0.20 are the famous leads.'; $('#portFb').className='fb ok'; }
+    else{ $$('#portQuiz .prow').forEach(b=>{b.className='prow';b.disabled=false;b.setAttribute('aria-pressed','false');b.querySelector('.st').textContent='—';}); $('#portFb').textContent=''; }
+  }
+  if($('#enumQuiz')){
+    if(S.quizEnum){ markPickerDone($('#enumQuiz')); lockPicker($('#enumQuiz')); $('#enumFb').textContent='✓ Prioritized — version-famous services first.'; $('#enumFb').className='fb ok'; }
+    else{ $$('#enumQuiz .prow').forEach(b=>{b.className='prow';b.disabled=false;b.setAttribute('aria-pressed','false');b.querySelector('.st').textContent='—';}); $('#enumFb').textContent=''; }
+  }
+  document.body.classList.toggle('no-anim', !S.settings.anim);
+  applyTheme();
+  updateProgress();
+}
+function initPresentation(){
+  loadState();
+  if(CAN_STORE && !S.theme){ try{ S.theme = localStorage.getItem(THEME_KEY); }catch(e){} }
+  applyTheme();
+  initTerminals();
+  fillTeamSelects();
+  initEthicsCheck(); initPortQuiz(); initEnumQuiz();
+  initLadder(); initTransform(); initPromptBlocks(); initTrainer(); bindGlobal();
+  buildOverview();
+  refreshAll();
+  const startAt = Math.min(S.slide||0, slides.length-1);
+  S.slide = startAt;
+  goToSlide(startAt, false);
+  updateProgress();
+  renderFinalStats();
+  $('#heroStatus').textContent = doneCount()>0 ? '■ ACTIVE — MISSION RUNNING' : '■ STANDBY — AWAITING ANALYSTS';
+  if(!CAN_STORE) showToast('localStorage unavailable — progress lasts for this session only','warn',4200);
+}
+document.addEventListener('DOMContentLoaded', initPresentation);
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a425ba1e8c7bdefc',t:'MTc5MDYyOTc0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
